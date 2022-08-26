@@ -1,0 +1,38 @@
+# Changing ls to exa.
+alias ls='ls -a --color=always --group-directories-first'
+alias ll='ls -lah --color=always --group-directories-first --time-style=long-iso'
+alias ld='ls -laD --color=always --group-directories-first --time-style=long-iso'
+alias l.='ls -lah --color=always --group-directories-first --time-style=long-iso | egrep "^\."'
+
+# Add color to grep.
+alias grep='grep --color=always'
+alias fgrep='fgrep --color=always'
+alias egrep='egrep --color=always'
+
+# Minor ripgrep changes.
+alias rg='rg --hidden'
+alias rgf='rg --hidden --files --ignore-file ~/.gitignore | rg'
+
+# Safety measures to prevent accidental overwriting.
+alias cp='cp -i'
+alias mv='mv -i'
+
+# I use trash-cli, so rm is disabled in my shell.
+# alias rm='echo "Error: rm is not recommended. Please use trash instead."'
+
+# Quick launch certain applications.
+# Use -p for editing multiple files at once.
+alias nv='nvim -p'
+# Replace vim with neovim.
+alias vim='nvim -p' 
+# alias fm='$FILE_MANAGER'
+# alias dmenu_run='dmenu_run -fn "JetBrains Mono 10" -c -l 20 -bw 2 -m 0 -g 2'
+
+# Navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias .3='cd ../../..'
+alias .4='cd ../../../..'
+alias .5='cd ../../../../..'
+alias fzf='rg --hidden --files --ignore-file ~/.gitignore | fzf'
+#alias fzy='rg --hidden --files --ignore-file ~/.gitignore | fzy'
