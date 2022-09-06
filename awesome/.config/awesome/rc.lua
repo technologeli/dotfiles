@@ -387,16 +387,28 @@ local globalkeys = gears.table.join(
   ),
 
   key("XF86MonBrightnessDown",
-    function() awful.spawn("xbacklight -dec 15") end,
+    function() awful.spawn("xbacklight -dec 10") end,
+    "brightness down", "media"
+  ),
+  skey("XF86MonBrightnessDown",
+    function() awful.spawn("xbacklight -dec 1") end,
     "brightness down", "media"
   ),
   key("XF86MonBrightnessUp",
-    function() awful.spawn("xbacklight -inc 15") end,
+    function() awful.spawn("xbacklight -inc 10") end,
+    "brightness up", "media"
+  ),
+  skey("XF86MonBrightnessUp",
+    function() awful.spawn("xbacklight -inc 1") end,
     "brightness up", "media"
   ),
 
   cmod("l", function() awful.spawn("light-locker-command -l") end,
     "lock", "system"),
+
+  smod("s", function()
+    awful.spawn.with_shell("maim -s | xclip -selection clipboard -t image/png")
+  end, "screenshot", "media"),
 
 
 
