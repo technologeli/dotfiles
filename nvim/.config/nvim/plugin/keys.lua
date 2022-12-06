@@ -68,6 +68,7 @@ setKey('n', '<S-h>', c('bprev'), opts)
 setKey('n', '<S-l>', c('bnext'), opts)
 
 -- Telescope special
+setKey('n', '<C-c>', c('Telescope git_branches'), opts)
 setKey('n', '<C-p>', c('Telescope git_files'), opts)
 setKey('n', '<C-b>', c('Telescope buffers'), opts)
 setKey('n', l('rg'), '', {

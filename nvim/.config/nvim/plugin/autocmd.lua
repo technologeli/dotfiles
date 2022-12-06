@@ -3,16 +3,16 @@ local ac = vim.api.nvim_create_autocmd
 
 local bo = vim.bo
 
-local fmt = ag('fmt', { clear = true })
-ac('BufWritePre', {
-  pattern = { '*.tsx', '*.ts' },
-  command = 'Neoformat',
-  group = fmt
-})
+-- local fmt = ag('fmt', { clear = true })
+-- ac('BufWritePre', {
+--   pattern = { '*.tsx', '*.ts' },
+--   command = 'Neoformat',
+--   group = fmt
+-- })
 
 local langs = ag('langs', { clear = true })
 ac('FileType', {
-  pattern = { 'python', 'go', 'cs' },
+  pattern = { 'python', 'go', 'cs', 'cpp' },
   callback = function()
     bo.tabstop = 4
     bo.shiftwidth = 4

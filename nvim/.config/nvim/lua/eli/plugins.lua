@@ -51,6 +51,12 @@ return packer.startup(function (use)
   -- LSP
   use 'neovim/nvim-lspconfig'
 
+  -- DAP
+  use 'mfussenegger/nvim-dap'
+  use 'rcarriga/nvim-dap-ui'
+  use 'theHamsta/nvim-dap-virtual-text'
+  use 'nvim-telescope/telescope-dap.nvim'
+
   -- CMP
   use 'hrsh7th/cmp-nvim-lsp'
   use 'hrsh7th/cmp-buffer'
@@ -93,7 +99,7 @@ return packer.startup(function (use)
   use {'iamcco/markdown-preview.nvim', run = 'cd app && npm install', cmd = 'MarkdownPreview'}
 
   -- ()
-  use 'rstacruz/vim-closer'
+  -- use 'rstacruz/vim-closer'
 
   -- --
   use 'numToStr/Comment.nvim'
