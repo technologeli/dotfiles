@@ -11,5 +11,4 @@ require("zen-mode").setup {
 vim.keymap.set("n", "<leader>z", function()
     require("zen-mode").toggle()
     vim.wo.wrap = false
-    SetColorscheme()
-end)
+end, { desc = '[Z]en Mode' })

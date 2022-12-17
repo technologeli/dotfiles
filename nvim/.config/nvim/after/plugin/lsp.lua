@@ -65,19 +65,18 @@ lsp.configure('sumneko_lua', {
     },
 })
 
-lsp.on_attach(function(client, bufnr)
+lsp.on_attach(function(_, bufnr)
     local opts = { buffer = bufnr, remap = false }
 
-    vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-    vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, opts)
-    vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
-    vim.keymap.set("n", "[d", vim.diagnostic.goto_next, opts)
-    vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, opts)
-    vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, opts)
-    vim.keymap.set("n", "<leader>vrr", vim.lsp.buf.references, opts)
-    vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
-    vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, { unpack(opts), desc = '[G]oto [D]efinition' })
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, { unpack(opts), desc = 'Hover' })
+    vim.keymap.set("n", "<leader>lws", vim.lsp.buf.workspace_symbol, { unpack(opts), desc = '[L]sp [W]orkspace [S]ymbol' })
+    vim.keymap.set("n", "<leader>ld", vim.diagnostic.open_float, { unpack(opts), desc = '[L]sp Diagnostic' })
+    vim.keymap.set("n", "[d", vim.diagnostic.goto_next, { unpack(opts), desc = 'Next Diagnostic' })
+    vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, { unpack(opts), desc = 'Previous Diagnostic' })
+    vim.keymap.set("n", "<leader>lca", vim.lsp.buf.code_action, { unpack(opts), desc = '[L]sp [C]ode [A]ction' })
+    vim.keymap.set("n", "<leader>lrr", vim.lsp.buf.references, { unpack(opts), desc = '[L]sp [R]eferences' })
+    vim.keymap.set("n", "<leader>lrn", vim.lsp.buf.rename, { unpack(opts), desc = '[L]sp [R]e[N]ame' })
 end)
 
 lsp.setup()
