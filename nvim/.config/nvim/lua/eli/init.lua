@@ -1,3 +1,4 @@
+require("eli.packer")
 require("eli.keymaps")
 require("eli.sets")
 

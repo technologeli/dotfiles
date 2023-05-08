@@ -1,6 +1,7 @@
 vim.opt.nu = true
 vim.opt.relativenumber = true
 vim.opt.laststatus = 3
+vim.opt.winbar = "%f %m"
 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4

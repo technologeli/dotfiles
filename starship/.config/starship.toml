@@ -21,14 +21,14 @@ style = 'purple'
 style = 'red'
 
 [hostname]
-ssh_only = false
+ssh_only = true
 format = '[$hostname](yellow) '
 trim_at = '.local'
 
 [username]
 style_root = "red"
 style_user = "yellow"
-format = '[$user]($style)@'
+format = '[$user]($style) '
 show_always = true
 
 [shell]
