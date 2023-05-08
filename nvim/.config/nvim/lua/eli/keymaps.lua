@@ -24,7 +24,7 @@ vim.keymap.set("n", "<leader>d", "\"_d")
 vim.keymap.set("v", "<leader>d", "\"_d")
 
 vim.keymap.set("n", "Q", "<nop>")
-vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, { desc = '[F]ormat file' })
+vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format({ timeout_ms = 2000 }) end, { desc = '[F]ormat file' })
 
 vim.keymap.set("n", "<C-j>", "<cmd>cnext<CR>zz", { desc = 'QuickFixList Next' })
 vim.keymap.set("n", "<C-k>", "<cmd>cprev<CR>zz", { desc = 'QuickFixList Previous' })
