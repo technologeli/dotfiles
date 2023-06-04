@@ -44,13 +44,18 @@ vim.keymap.set("v", "<leader>d", "\"_d")
 vim.keymap.set("n", "Q", "<nop>")
 vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format({ timeout_ms = 2000 }) end, { desc = '[F]ormat file' })
 
-vim.keymap.set("n", "<C-j>", "<cmd>cnext<CR>zz", { desc = 'QuickFixList Next' })
-vim.keymap.set("n", "<C-k>", "<cmd>cprev<CR>zz", { desc = 'QuickFixList Previous' })
-vim.keymap.set("n", "<leader>j", "<cmd>lnext<CR>zz", { desc = 'LocalList Next' })
-vim.keymap.set("n", "<leader>k", "<cmd>lprev<CR>zz", { desc = 'LocalList Previous' })
+vim.keymap.set("n", "<leader>j", "<cmd>cnext<CR>zz", { desc = 'QuickFixList Next' })
+vim.keymap.set("n", "<leader>k", "<cmd>cprev<CR>zz", { desc = 'QuickFixList Previous' })
+-- vim.keymap.set("n", "<leader>j", "<cmd>lnext<CR>zz", { desc = 'LocalList Next' })
+-- vim.keymap.set("n", "<leader>k", "<cmd>lprev<CR>zz", { desc = 'LocalList Previous' })
 
 vim.keymap.set("n", "<C-s>", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>", { desc = 'Replace all instances' })
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true }, { desc = 'Make file executable' })
 
 vim.keymap.set('i', '<C-H>', '<C-W>', { desc = 'Delete Word' })
 vim.keymap.set('i', '<M-backspace>', '<C-W>', { desc = 'Delete Word (Mac)' })
+
+vim.keymap.set("n", "<C-h>", "<C-W><C-h>", { desc = "Focus window left" })
+vim.keymap.set("n", "<C-j>", "<C-W><C-j>", { desc = "Focus window down" })
+vim.keymap.set("n", "<C-k>", "<C-W><C-k>", { desc = "Focus window up" })
+vim.keymap.set("n", "<C-l>", "<C-W><C-l>", { desc = "Focus window right" })
