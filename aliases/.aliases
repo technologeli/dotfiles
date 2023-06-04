@@ -1,7 +1,7 @@
 # Changing ls to exa.
-alias ls='ls -a --color=always'
-alias ll='ls -lah --color=always'
-alias ld='ls -laD --color=always'
+alias ls='exa -a --color=always'
+alias ll='exa -lah --color=always'
+alias ld='exa -laD --color=always'
 
 # Add color to grep.
 alias grep='grep --color=always'

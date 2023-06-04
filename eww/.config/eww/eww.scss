@@ -1,0 +1,29 @@
+@import "catppuccin";
+* {
+    all: unset;
+}
+
+.bar {
+    border-radius: 9999px;
+    background-color: $sapphire;
+}
+
+.workspaces-widget {
+    border-radius: 9999px;
+}
+
+.workspace-entry {
+    color: $text;
+    background-color: $base;
+
+    &.occupied {
+        color: $base;
+        background-color: $yellow;
+    }
+
+    &.current {
+        color: $base;
+        background-color: $mauve;
+    }
+}
+
