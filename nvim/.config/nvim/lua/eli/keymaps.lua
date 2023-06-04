@@ -2,25 +2,25 @@ vim.g.mapleader = " "
 vim.keymap.set("n", "<Space>", "<Nop>")
 vim.keymap.set("n", "<leader>b", "<C-^>", { desc = 'Previous [B]uffer' })
 
-local closeNetRW = function()
-    if string.find(vim.bo.filetype, "netrw") then
-        vim.cmd("bwipeout")
-    end
-end
+-- local closeNetRW = function()
+--     if string.find(vim.bo.filetype, "netrw") then
+--         vim.cmd("bwipeout")
+--     end
+-- end
+--
+-- local explore = function()
+--     if string.find(vim.bo.filetype, "netrw") then
+--         vim.cmd("bwipeout")
+--     else
+--         vim.cmd("1wincmd w")
+--         if not string.find(vim.bo.filetype, "netrw") then
+--             vim.cmd.Vex()
+--         end
+--     end
+-- end
 
-local explore = function()
-    if string.find(vim.bo.filetype, "netrw") then
-        vim.cmd("bwipeout")
-    else
-        vim.cmd("1wincmd w")
-        if not string.find(vim.bo.filetype, "netrw") then
-            vim.cmd.Vex()
-        end
-    end
-end
-
-vim.keymap.set("n", "<leader>e", explore, { desc = '[E]xplorer' })
-vim.keymap.set("n", "<leader>w", closeNetRW, { desc = '[E]xplorer' })
+vim.keymap.set("n", "<leader>e", vim.cmd.Ex, { desc = '[E]xplorer' })
+-- vim.keymap.set("n", "<leader>w", closeNetRW, { desc = '[E]xplorer' })
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = 'Switch line below' })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = 'Switch line above' })
