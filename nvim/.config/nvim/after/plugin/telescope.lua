@@ -24,7 +24,6 @@ telescope.setup({
     },
 })
 
-vim.keymap.set('n', '<leader>?', builtin.oldfiles, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader><space>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
 vim.keymap.set('n', '<C-p>', builtin.git_files, { desc = 'Search Git Files' })

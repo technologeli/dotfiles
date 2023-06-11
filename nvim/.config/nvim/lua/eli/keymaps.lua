@@ -1,6 +1,7 @@
 vim.g.mapleader = " "
 vim.keymap.set("n", "<Space>", "<Nop>")
-vim.keymap.set("n", "<leader>b", "<C-^>", { desc = 'Previous [B]uffer' })
+vim.keymap.set("n", "<leader>l", "<cmd>Lazy<cr>", { desc = '[L]azy' })
+vim.keymap.set("n", "<leader>m", "<cmd>Mason<cr>", { desc = '[M]ason' })
 
 -- local closeNetRW = function()
 --     if string.find(vim.bo.filetype, "netrw") then
@@ -19,8 +20,11 @@ vim.keymap.set("n", "<leader>b", "<C-^>", { desc = 'Previous [B]uffer' })
 --     end
 -- end
 
-vim.keymap.set("n", "<leader>e", vim.cmd.Ex, { desc = '[E]xplorer' })
+-- vim.keymap.set("n", "<leader>e", vim.cmd.Ex, { desc = '[E]xplorer' })
 -- vim.keymap.set("n", "<leader>w", closeNetRW, { desc = '[E]xplorer' })
+vim.keymap.set("n", "<leader>t", "<cmd>NvimTreeFindFile<cr>", { desc = "[T]o File in Tree" })
+vim.keymap.set("n", "<leader>e", "<cmd>NvimTreeFocus<cr>", { desc = "[E]xplorer" })
+vim.keymap.set("n", "<leader>w", "<cmd>NvimTreeClose<cr>", { desc = "Close Explorer" })
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = 'Switch line below' })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = 'Switch line above' })
