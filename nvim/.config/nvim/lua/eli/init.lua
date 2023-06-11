@@ -1,5 +1,5 @@
-require("eli.lazy")
 require("eli.keymaps")
+require("eli.lazy")
 require("eli.sets")
 
 vim.cmd.colorscheme('catppuccin')
