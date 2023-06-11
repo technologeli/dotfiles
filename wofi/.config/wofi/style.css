@@ -1,0 +1,32 @@
+/* See https://cloudninja.pw/docs/wofi.html for styling guide */
+
+window {
+    color: #CDD6F4;
+    background-color: transparent;
+}
+
+#input {
+    margin-bottom: 10px;
+    color: #CDD6F4;
+    background-color: #1E1E2E;
+    border: 4px solid #89dceb;
+} 
+
+#text {
+    margin-left: 5px;
+}
+
+#inner-box {
+    background-color: #1E1E2E;
+    border-radius: 0.5rem;
+}
+
+#entry:selected {
+    background-color: #89dceb;
+    border-radius: 0.5rem;
+    border: none;
+}
+
+#text:selected {
+    color: #1E1E2E;
+}
