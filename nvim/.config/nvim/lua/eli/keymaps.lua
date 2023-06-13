@@ -22,9 +22,9 @@ vim.keymap.set("n", "<leader>m", "<cmd>Mason<cr>", { desc = '[M]ason' })
 
 -- vim.keymap.set("n", "<leader>e", vim.cmd.Ex, { desc = '[E]xplorer' })
 -- vim.keymap.set("n", "<leader>w", closeNetRW, { desc = '[E]xplorer' })
-vim.keymap.set("n", "<leader>t", "<cmd>NvimTreeFindFile<cr>", { desc = "[T]o File in Tree" })
-vim.keymap.set("n", "<leader>e", "<cmd>NvimTreeFocus<cr>", { desc = "[E]xplorer" })
-vim.keymap.set("n", "<leader>w", "<cmd>NvimTreeClose<cr>", { desc = "Close Explorer" })
+vim.keymap.set("n", "<leader>t", "<cmd>Neotree reveal right<cr>", { desc = "[T]o File in Tree" })
+vim.keymap.set("n", "<leader>e", "<cmd>Neotree focus right<cr>", { desc = "[E]xplorer" })
+vim.keymap.set("n", "<leader>w", "<cmd>Neotree close<cr>", { desc = "Close Explorer" })
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = 'Switch line below' })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = 'Switch line above' })
