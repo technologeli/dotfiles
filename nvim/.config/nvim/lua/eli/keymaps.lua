@@ -1,7 +1,6 @@
 vim.g.mapleader = " "
 vim.keymap.set("n", "<Space>", "<Nop>")
 vim.keymap.set("n", "<leader>l", "<cmd>Lazy<cr>", { desc = '[L]azy' })
-vim.keymap.set("n", "<leader>m", "<cmd>Mason<cr>", { desc = '[M]ason' })
 
 -- local closeNetRW = function()
 --     if string.find(vim.bo.filetype, "netrw") then
@@ -22,9 +21,6 @@ vim.keymap.set("n", "<leader>m", "<cmd>Mason<cr>", { desc = '[M]ason' })
 
 -- vim.keymap.set("n", "<leader>e", vim.cmd.Ex, { desc = '[E]xplorer' })
 -- vim.keymap.set("n", "<leader>w", closeNetRW, { desc = '[E]xplorer' })
-vim.keymap.set("n", "<leader>t", "<cmd>Neotree reveal right<cr>", { desc = "[T]o File in Tree" })
-vim.keymap.set("n", "<leader>e", "<cmd>Neotree focus right<cr>", { desc = "[E]xplorer" })
-vim.keymap.set("n", "<leader>w", "<cmd>Neotree close<cr>", { desc = "Close Explorer" })
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = 'Switch line below' })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = 'Switch line above' })
@@ -63,3 +59,4 @@ vim.keymap.set("n", "<C-h>", "<C-W><C-h>", { desc = "Focus window left" })
 vim.keymap.set("n", "<C-j>", "<C-W><C-j>", { desc = "Focus window down" })
 vim.keymap.set("n", "<C-k>", "<C-W><C-k>", { desc = "Focus window up" })
 vim.keymap.set("n", "<C-l>", "<C-W><C-l>", { desc = "Focus window right" })
+
