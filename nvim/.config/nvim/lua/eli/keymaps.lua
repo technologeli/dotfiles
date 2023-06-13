@@ -21,6 +21,17 @@ vim.keymap.set("n", "<leader>l", "<cmd>Lazy<cr>", { desc = '[L]azy' })
 
 -- vim.keymap.set("n", "<leader>e", vim.cmd.Ex, { desc = '[E]xplorer' })
 -- vim.keymap.set("n", "<leader>w", closeNetRW, { desc = '[E]xplorer' })
+local qfl_open = false
+local qfl = function ()
+    if qfl_open then
+        vim.cmd.cclose()
+        qfl_open = false
+    else
+        vim.cmd.copen()
+        qfl_open = true
+    end
+end
+vim.keymap.set("n", "<C-q>", qfl, { desc = "Quick Fix List" })
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = 'Switch line below' })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = 'Switch line above' })
