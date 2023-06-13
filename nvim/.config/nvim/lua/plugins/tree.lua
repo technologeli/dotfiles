@@ -7,7 +7,7 @@ return {
         "MunifTanjim/nui.nvim",
     },
     keys = {
-        { "<leader>t", "<cmd>Neotree reveal right<cr>", desc = "[T]o File in Tree" },
+        { "<leader>r", "<cmd>Neotree reveal right<cr>", desc = "[T]o File in Tree" },
         { "<leader>e", "<cmd>Neotree focus right<cr>",  desc = "[E]xplorer" },
         { "<leader>w", "<cmd>Neotree close<cr>",        desc = "Close Explorer" },
     },
