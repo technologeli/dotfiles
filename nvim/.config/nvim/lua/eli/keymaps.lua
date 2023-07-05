@@ -19,7 +19,8 @@ vim.keymap.set("n", "<leader>l", "<cmd>Lazy<cr>", { desc = '[L]azy' })
 --     end
 -- end
 
--- vim.keymap.set("n", "<leader>e", vim.cmd.Ex, { desc = '[E]xplorer' })
+vim.keymap.set("n", "<leader>e", vim.cmd.Ex, { desc = "[E]xplorer" })
+vim.keymap.set("n", "<leader>b", vim.cmd.bp, { desc = "Previous [B]uffer" })
 -- vim.keymap.set("n", "<leader>w", closeNetRW, { desc = '[E]xplorer' })
 local qfl_open = false
 local qfl = function ()
