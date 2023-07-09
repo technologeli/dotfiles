@@ -15,3 +15,5 @@ end
 set -gx PNPM_HOME "/home/eli/.local/share/pnpm"
 set -gx PATH "$PNPM_HOME" $PATH
 # pnpm end
+
+set -gx PATH "~/.local/bin/" $PATH
