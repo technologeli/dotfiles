@@ -4,9 +4,9 @@ add_newline = false
 disabled = true
 
 [character]
-success_symbol = '[>>>](bold green)'
-vicmd_symbol = '[\[V\]](bold cyan)'
-error_symbol = '[<<<](bold red)'
+success_symbol = '[n ❯](bold green)'
+vicmd_symbol = '[v ❯](bold cyan)'
+error_symbol = '[x ❯](bold red)'
 
 [cmd_duration]
 min_time = 1000
@@ -33,7 +33,10 @@ show_always = true
 
 [shell]
 disabled = false
-bash_indicator = '[\[bash\]](bright-black)'
-fish_indicator = '[\[fish\]](blue)'
-zsh_indicator = '[\[zsh\]](purple)'
+bash_indicator = '[b](bright-black)'
+fish_indicator = '[f](blue)'
+zsh_indicator = '[z](purple)'
 format = '$indicator '
+
+[time]
+disabled = true
