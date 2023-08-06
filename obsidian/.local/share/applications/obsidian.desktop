@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Obsidian
+Comment=Note Taking App
+Exec=/home/eli/.local/bin/obsidian.appimage
+MimeType=x-scheme-handler/obsidian;text/html;
+Icon=/home/eli/.local/share/applications/Obsidian.png
