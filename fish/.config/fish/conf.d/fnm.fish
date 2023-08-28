@@ -4,3 +4,6 @@ end
 # fnm
 set PATH "/home/eli/.local/share/fnm" $PATH
 fnm env | source
+# fnm
+set PATH "/home/eli/.local/share/fnm" $PATH
+fnm env | source
