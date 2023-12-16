@@ -140,6 +140,7 @@ bindsym $mod+e layout toggle split
 
 bindsym $mod+f fullscreen
 bindsym $mod+Shift+space floating toggle
+bindsym $mod+$alt+space [workspace=__focused__] floating toggle 
 bindsym $mod+space focus mode_toggle
 bindsym $mod+a focus parent
 
