@@ -2,6 +2,6 @@
 
 pushd ~/dotfiles
 
-stow -R aliases/ eww/ fish/ hypr/ kitty/ nvim/ starship/ tmux/ wofi/
+stow -R aliases/ fish/ kitty/ nvim/ starship/ tmux/ wofi/
 
 popd ~/dotfiles
