@@ -293,6 +293,30 @@ vim.opt.completeopt = 'menuone,noselect'
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = 'Switch line below' })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = 'Switch line above' })
+vim.keymap.set("n", "J", "mzJ`z")
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
+vim.keymap.set("x", "<leader>p", "\"_dP")
+
+-- asbjornHaland
+vim.keymap.set("n", "<leader>y", "\"+y")
+vim.keymap.set("v", "<leader>y", "\"+y")
+vim.keymap.set("n", "<leader>Y", "\"+Y")
+
+vim.keymap.set("n", "<leader>d", "\"_d")
+vim.keymap.set("v", "<leader>d", "\"_d")
+
+vim.keymap.set('i', '<C-H>', '<C-W>', { desc = 'Delete Word' })
+vim.keymap.set('i', '<M-backspace>', '<C-W>', { desc = 'Delete Word (Mac)' })
+
+vim.keymap.set("n", "<C-h>", "<C-W><C-h>", { desc = "Focus window left" })
+vim.keymap.set("n", "<C-j>", "<C-W><C-j>", { desc = "Focus window down" })
+vim.keymap.set("n", "<C-k>", "<C-W><C-k>", { desc = "Focus window up" })
+vim.keymap.set("n", "<C-l>", "<C-W><C-l>", { desc = "Focus window right" })
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
@@ -439,10 +463,10 @@ vim.defer_fn(function()
       swap = {
         enable = true,
         swap_next = {
-          ['<leader>a'] = '@parameter.inner',
+          ['<leader>p'] = '@parameter.inner',
         },
         swap_previous = {
-          ['<leader>A'] = '@parameter.inner',
+          ['<leader>P'] = '@parameter.inner',
         },
       },
     },
