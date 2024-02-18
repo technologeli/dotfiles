@@ -21,9 +21,9 @@ alias rgf='rg --hidden --files --ignore-file ~/.gitignore | rg'
 
 # Quick launch certain applications.
 # Use -p for editing multiple files at once.
-alias nv='nvim -p'
+# alias nv='nvim -p'
 # Replace vim with neovim.
-alias vim='nvim -p' 
+# alias vim='nvim -p' 
 # alias fm='$FILE_MANAGER'
 # alias dmenu_run='dmenu_run -fn "JetBrains Mono 10" -c -l 20 -bw 2 -m 0 -g 2'
 
