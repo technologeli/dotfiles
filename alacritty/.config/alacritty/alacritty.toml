@@ -1,0 +1,14 @@
+import = [
+"~/.config/alacritty/catppuccin_mocha.toml",
+]
+
+[window]
+decorations = "NONE"
+padding = { x = 4, y = 4 }
+
+[font]
+normal = { family = "Hack Nerd Font", style = "Regular" }
+size = 16
+
+[env]
+term = "xterm-256color"
