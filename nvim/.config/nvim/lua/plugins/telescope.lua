@@ -13,7 +13,8 @@ return {
 						theme = "ivy"
 					},
 					find_files = {
-						theme = "ivy"
+						theme = "ivy",
+						hidden = true,
 					}
 				}
 			}
