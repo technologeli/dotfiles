@@ -2,6 +2,8 @@ local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 local keys = {}
 
+config.default_prog = { '/usr/bin/fish', '-l' }
+
 config.use_fancy_tab_bar = false
 config.color_scheme = "GruvboxDark"
 config.max_fps = 144
