@@ -12,6 +12,7 @@ vim.opt.swapfile = false
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
+vim.opt.guicursor = ""
 vim.opt.signcolumn = "yes"
 vim.opt.colorcolumn = "80"
 vim.opt.scrolloff = 10 -- minimum lines above and below cursor
