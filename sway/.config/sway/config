@@ -133,17 +133,25 @@ bindsym $mod+r mode "resize"
 # Status Bar:
 #
 # Read `man 5 sway-bar` for more information about this section.
+set $main #b16286
+set $text #fbf1c7
+set $text2 #928374
+set $bg #282828
+set $urgent #cc241d
 bar {
     position top
 
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
-	status_command while echo "B:$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep percentage | awk '{print $2}') V:$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2 * 100}')% $(date +'%Y-%m-%d %I:%M %p')"; do sleep 1; done
+    status_command while echo "B:$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep percentage | awk '{print $2}') V:$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2 * 100}')% $(date +'%Y-%m-%d %I:%M %p')"; do sleep 1; done
 
     colors {
-        statusline #ffffff
-        background #323232
-        inactive_workspace #32323200 #32323200 #5c5c5c
+        statusline $text
+        background $bg
+        focused_workspace $main $main $text
+        active_workspace $main $main $text
+        inactive_workspace $bg $bg $text2
+        urgent_workspace $urgent $urgent $text
     }
 }
 
@@ -159,5 +167,10 @@ assign [app_id="virt-manager"] 8
 assign [app_id="firefox"] 9
 assign [app_id="org.wezfurlong.wezterm"] 10
 focus_follows_mouse no
+
+client.focused $main $main $main
+client.unfocused $bg $bg $bg
+client.urgent $urgent $urgent $urgent
+
 
 include /etc/sway/config.d/*
