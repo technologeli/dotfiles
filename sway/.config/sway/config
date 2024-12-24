@@ -168,9 +168,10 @@ assign [app_id="firefox"] 9
 assign [app_id="org.wezfurlong.wezterm"] 10
 focus_follows_mouse no
 
-client.focused $main $main $main
-client.unfocused $bg $bg $bg
-client.urgent $urgent $urgent $urgent
+client.focused $main $main $text
+# client.<class> <border> <background> <text> [<indicator> [<child_border>]]
+client.unfocused $bg $bg $text2
+client.urgent $urgent $urgent $text
 
 
 include /etc/sway/config.d/*

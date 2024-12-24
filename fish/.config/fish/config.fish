@@ -14,7 +14,7 @@ if status is-interactive
 
 	alias ls "eza --color=auto"
 	alias grep "grep --color=auto"
-	alias bat "batcat"
+	alias bat "batcat --theme=gruvbox-dark"
 end
 set -gx VOLTA_HOME "$HOME/.volta"
 set -gx PATH "$VOLTA_HOME/bin" $PATH
