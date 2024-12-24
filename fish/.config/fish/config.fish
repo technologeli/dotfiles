@@ -6,6 +6,7 @@ fish_add_path ~/.local/bin
 
 if status is-interactive
 	set -Ux EDITOR nvim
+	set -Ux MANPAGER "nvim +Man!"
 	fish_vi_key_bindings
 	zoxide init fish --cmd cd | source
 	fzf_key_bindings
@@ -13,4 +14,5 @@ if status is-interactive
 
 	alias ls "eza --color=auto"
 	alias grep "grep --color=auto"
+	alias bat "batcat"
 end
