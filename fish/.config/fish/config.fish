@@ -5,6 +5,7 @@ set fish_greeting
 fish_add_path ~/.local/bin
 
 if status is-interactive
+	set -Ux EDITOR nvim
 	fish_vi_key_bindings
 	zoxide init fish --cmd cd | source
 	fzf_key_bindings
