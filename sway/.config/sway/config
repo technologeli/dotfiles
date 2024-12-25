@@ -5,7 +5,7 @@
 
 # super
 # set $mod Mod4
-set $mod Mod1
+set $mod Mod4
 # Mod1 is Alt, Mod4 is Super (Windows key)
 
 set $left h
@@ -37,7 +37,7 @@ exec dunst
 # resumed. It will also lock your screen before your computer goes to sleep.
 
 input "type:keyboard" {
-	xkb_options "ctrl:nocaps"
+	xkb_options "ctrl:nocaps,altwin:swap_lalt_lwin"
 }
 input "type:touchpad" {
 	natural_scroll enabled
@@ -165,6 +165,7 @@ assign [app_id="libreoffice*"] 1
 assign [class="obsidian"] 2
 assign [app_id="virt-manager"] 8
 assign [app_id="firefox"] 9
+assign [app_id="zen-beta"] 9
 assign [app_id="org.wezfurlong.wezterm"] 10
 focus_follows_mouse no
 
