@@ -15,6 +15,14 @@ if status is-interactive
 	alias ls "eza --color=auto"
 	alias grep "grep --color=auto"
 	alias bat "batcat --theme=gruvbox-dark"
+	function y
+		set tmp (mktemp -t "yazi-cwd.XXXXXX")
+		yazi $argv --cwd-file="$tmp"
+		if set cwd (command cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
+			builtin cd -- "$cwd"
+		end
+		rm -f -- "$tmp"
+	end
 end
 set -gx VOLTA_HOME "$HOME/.volta"
 set -gx PATH "$VOLTA_HOME/bin" $PATH
