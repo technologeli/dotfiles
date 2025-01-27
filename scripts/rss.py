@@ -2,6 +2,7 @@
 
 import requests
 import sys
+import subprocess
 
 def get_rss_url(url: str) -> str:
     res = requests.get(url)
@@ -18,4 +19,11 @@ if __name__ == "__main__":
         sys.exit(1)
 
     url = get_rss_url(sys.argv[1])
+    os = subprocess.run(["uname", "-s"], capture_output=True).stdout.decode().lower().strip()
+    if os == "linux":
+        copy = subprocess.run(["wl-copy", url])
+        print("Linux copy return code:", copy.returncode)
+    else:
+        print("Not implemented yet")
+
     print(url)
