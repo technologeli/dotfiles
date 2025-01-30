@@ -5,7 +5,10 @@ local keys = {}
 config.default_prog = { '/usr/bin/fish', '-l' }
 
 config.use_fancy_tab_bar = false
-config.color_scheme = "GruvboxDark"
+
+local light_scheme = "GruvboxLight"
+local dark_scheme = "GruvboxDark"
+config.color_scheme = dark_scheme
 config.max_fps = 144
 config.font = wezterm.font {
 	family = "JetBrains Mono",
@@ -56,6 +59,19 @@ table.insert(keys, { mods = "LEADER", key = "h", action = wezterm.action { Activ
 table.insert(keys, { mods = "LEADER", key = "j", action = wezterm.action { ActivatePaneDirection = "Down" } })
 table.insert(keys, { mods = "LEADER", key = "k", action = wezterm.action { ActivatePaneDirection = "Up" } })
 table.insert(keys, { mods = "LEADER", key = "l", action = wezterm.action { ActivatePaneDirection = "Right" } })
+
+wezterm.on("toggle-dark-mode", function(window,pane)
+  local overrides = window:get_config_overrides() or {}
+  if (overrides.color_scheme == light_scheme)
+  then
+    overrides.color_scheme = dark_scheme
+  else
+    overrides.color_scheme = light_scheme
+  end
+  window:set_config_overrides(overrides)
+end)
+
+table.insert(keys, { mods = "LEADER", key = "t", action = wezterm.action{EmitEvent="toggle-dark-mode"},})
 
 for i = 0,8 do
 	table.insert(keys, { mods = "LEADER", key = tostring(i + 1), action = wezterm.action.ActivateTab(i) })
