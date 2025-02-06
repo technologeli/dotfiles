@@ -1,5 +1,5 @@
 # Dependencies:
-# sway swaylock swayidle xwayland wl-clipboard grim slurp brightnessctl playerctl dunst libnotify-bin wofi
+# sway swaylock swayidle xwayland wl-clipboard grim slurp brightnessctl playerctl dunst libnotify-bin wofi xdg-desktop-portal-wlr
 # see /etc/sway/config for default config
 # Read `man 5 sway` for a complete reference.
 
