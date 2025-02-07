@@ -30,8 +30,6 @@ if status is-interactive
 	if test -z "$SSH_AUTH_SOCK"
 		eval (ssh-agent -c)
 	end
-
-	alias temp-ssh 'ssh-add -t 1m "$HOME/.ssh/id_ed25519" 2>/dev/null'
 end
 set -gx VOLTA_HOME "$HOME/.volta"
 fish_add_path "$VOLTA_HOME/bin"
