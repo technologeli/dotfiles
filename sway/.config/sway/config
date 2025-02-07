@@ -138,7 +138,7 @@ bar {
 
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
-    status_command while echo "N:$(~/dotfiles/scripts/mute.sh) B:$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep percentage | awk '{print $2}') V:$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2 * 100}')% $(date +'%Y-%m-%d %I:%M %p')"; do sleep 1; done
+    status_command while ~/dotfiles/scripts/sway-status.sh; do sleep 1; done
 
     colors {
         statusline $text
