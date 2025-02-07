@@ -27,7 +27,7 @@ if status is-interactive
 	fish_add_path "$HOME/dotfiles/scripts"
 
 	# start ssh-agent if not running
-	if test -z "$SSH_AUTH_SOCK"
+	if test "$(ps aux | grep ssh-agent | wc -l)" -eq "1" # 1 because of the grep itself
 		eval (ssh-agent -c)
 	end
 end
