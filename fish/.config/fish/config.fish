@@ -23,8 +23,10 @@ if status is-interactive
 		end
 		rm -f -- "$tmp"
 	end
+
+	fish_add_path "$HOME/dotfiles/scripts"
 end
 set -gx VOLTA_HOME "$HOME/.volta"
 fish_add_path "$VOLTA_HOME/bin"
 fish_add_path /usr/local/go/bin
-fish_add_path ~/go/bin
+fish_add_path "$HOME/go/bin"
