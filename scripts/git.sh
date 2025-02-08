@@ -3,7 +3,6 @@
 source $HOME/dotfiles/scripts/init.sh
 $SCRIPTS/temp-ssh.sh
 
-
 # defaults
 pull=false
 push=false

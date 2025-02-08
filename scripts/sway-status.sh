@@ -5,8 +5,16 @@ test "$(dunstctl is-paused)" = "true" && muted="Muted" || muted="Unmuted"
 
 # battery
 battery=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep percentage | awk '{print $2}' | cut -f1 -d%)
-if [ $battery -le 10 ]; then
-	notify-send "Low battery!"
+test "$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep state | awk '{print $2}')" = "charging" && charging="+" || charging="-"
+STATUS_FILE="/tmp/sway-battery"
+
+if [ "$battery" -le 30 ] && [ "$(cat $STATUS_FILE)" != "$charging" ]; then
+	if [ "$charging" == "+" ]; then
+		notify-send "Charging!"
+	else
+		notify-send "Low battery!"
+	fi
+	echo $charging > $STATUS_FILE
 fi
 
 # volume
