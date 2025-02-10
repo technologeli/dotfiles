@@ -25,11 +25,7 @@ if status is-interactive
 	end
 
 	fish_add_path "$HOME/dotfiles/scripts"
-
-	# start ssh-agent if not running
-	if test "$(ps aux | grep ssh-agent | wc -l)" -eq "1" # 1 because of the grep itself
-		eval (ssh-agent -c)
-	end
+	set -Ux SSH_AUTH_SOCK "$XDG_RUNTIME_DIR/ssh-agent.socket"
 end
 set -gx VOLTA_HOME "$HOME/.volta"
 fish_add_path "$VOLTA_HOME/bin"

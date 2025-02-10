@@ -8,7 +8,7 @@ battery=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep percenta
 test "$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep state | awk '{print $2}')" = "charging" && charging="+" || charging="-"
 STATUS_FILE="/tmp/sway-battery"
 
-if [ "$battery" -le 30 ] && [ "$(cat $STATUS_FILE)" != "$charging" ]; then
+if [ "$battery" -le 10 ] && [ "$(cat $STATUS_FILE)" != "$charging" ]; then
 	if [ "$charging" == "+" ]; then
 		notify-send "Charging!"
 	else
