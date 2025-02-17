@@ -7,6 +7,7 @@ return {
 			require("lspconfig").pyright.setup { capabilities = capabilities }
 			require("lspconfig").clangd.setup { capabilities = capabilities }
 			require("lspconfig").gopls.setup { capabilities = capabilities }
+			require("lspconfig").ts_ls.setup { capabilities = capabilities }
 		end,
 		dependencies = {
 			{
