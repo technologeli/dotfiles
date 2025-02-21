@@ -3,6 +3,7 @@ local config = wezterm.config_builder()
 local keys = {}
 
 config.default_prog = { '/usr/bin/fish', '-l' }
+config.default_gui_startup_args = { 'connect', 'unix' }
 
 config.use_fancy_tab_bar = false
 
