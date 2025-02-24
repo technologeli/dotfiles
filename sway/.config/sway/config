@@ -49,7 +49,6 @@ bindsym $mod+p exec $menu
 bindsym $mod+Shift+r reload
 bindsym $mod+Shift+e exec swaynag -t warning -m 'Log out?' -B 'Yes, exit sway' 'swaymsg exit'
 bindsym Print exec grim -l 0 -g "$(slurp)" - | wl-copy
-bindsym $mod+Shift+s exec grim -l 0 -g "$(slurp)" - | wl-copy
 
 bindsym $mod+$left focus left
 bindsym $mod+$down focus down
@@ -86,6 +85,7 @@ bindsym $mod+Shift+0 move container to workspace number 10
 bindsym $mod+b splith
 bindsym $mod+v splitv
 
+bindsym $mod+Shift+s sticky toggle
 bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
