@@ -27,7 +27,9 @@ if status is-interactive
 	fish_add_path "$HOME/dotfiles/scripts"
 	set -Ux SSH_AUTH_SOCK "$XDG_RUNTIME_DIR/ssh-agent.socket"
 end
+set -gx JAVA_HOME "/opt/jdk-21.0.6+7/"
 set -gx VOLTA_HOME "$HOME/.volta"
 fish_add_path "$VOLTA_HOME/bin"
 fish_add_path /usr/local/go/bin
 fish_add_path "$HOME/go/bin"
+fish_add_path "$JAVA_HOME/bin"
