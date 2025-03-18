@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 source $HOME/dotfiles/scripts/init.sh
-$SCRIPTS/temp-ssh.sh
 
 # defaults
 pull=false
@@ -28,6 +27,10 @@ while [ $# -gt 0 ]; do
 			;;
 	esac
 done
+
+if [ "$pull" == true ] || [ "$push" == true ]; then
+	$SCRIPTS/temp-ssh.sh
+fi
 
 run() {
 	echo -e "${GREEN}========== ${YELLOW}$1${GREEN} ==========${RESET}"
