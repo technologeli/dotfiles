@@ -3,23 +3,12 @@
 
 * Future Tasks
 
-- [ ] Sort config
-
 - [ ] Denote
-
 - [ ] Eat/Eshell?
-
 - [ ] LSP
-
 - [ ] Treesitter?
-
 - [ ] Harpoon
-
-- [ ] Vim folding better keybinds
-
 - [ ] Org heading size variety
-
-- [ ] Org toggle text formatting
 
 * Installation
 
@@ -82,7 +71,7 @@ This is loaded later in the configuration, at the end.
   (setq use-package-always-ensure t)
 #+end_src
 
-** Theming
+* Theming
 This includes various graphical customizations, including fonts.
 
 #+begin_src emacs-lisp
@@ -97,13 +86,17 @@ This includes various graphical customizations, including fonts.
 *** Font Settings
 
 #+begin_src emacs-lisp
-  (setq vitix/fixed-font-height 150)
-  (setq vitix/variable-font-height 140)
-  (set-face-attribute 'default nil :font "Iosevka Fixed SS14" :height vitix/fixed-font-height)
-  (set-face-attribute 'fixed-pitch nil :font "Iosevka Fixed SS14" :height vitix/fixed-font-height)
-  (set-face-attribute 'line-number nil :font "Iosevka Fixed SS14" :height vitix/fixed-font-height)
-  (set-face-attribute 'line-number-current-line nil :font "Iosevka Fixed SS14" :height vitix/fixed-font-height)
-  (set-face-attribute 'variable-pitch nil :font "Iosevka Aile" :height vitix/variable-font-height)
+
+  (defun vitix/init-fonts ()
+    (setq vitix/fixed-font-height 150)
+    (setq vitix/variable-font-height 140)
+    (set-face-attribute 'default nil :font "Iosevka Fixed SS14" :height vitix/fixed-font-height)
+    (set-face-attribute 'fixed-pitch nil :font "Iosevka Fixed SS14" :height vitix/fixed-font-height)
+    (set-face-attribute 'line-number nil :font "Iosevka Fixed SS14" :height vitix/fixed-font-height)
+    (set-face-attribute 'line-number-current-line nil :font "Iosevka Fixed SS14" :height vitix/fixed-font-height)
+    (set-face-attribute 'variable-pitch nil :font "Iosevka Aile" :height vitix/variable-font-height)
+    )
+  (vitix/init-fonts)
 #+end_src
 
 *** Theme Packages
@@ -200,8 +193,7 @@ My completion stack is as follows:
     (completion-category-overrides '((file (styles basic partial-completion)))))
 #+end_src
 
-** unsorted
-
+** Keybinds
 #+begin_src emacs-lisp
   ;; Keybinds
   (which-key-mode t)
@@ -227,7 +219,8 @@ My completion stack is as follows:
 
     (general-define-key
      :states 'normal
-     "-" #'dired-jump)
+     "-" #'dired-jump
+     "zf" #'evil-toggle-fold)
 
     (general-define-key
      :keymaps 'dired-mode-map
@@ -237,27 +230,67 @@ My completion stack is as follows:
      :keymaps 'vterm-mode-map
      "C-S-v" #'vterm-yank)
     )
+#+end_src
 
-  ;; Dired
+** Dired
+Useful keys:
+- =R= - rename/relocate file
+- =C= - copy file
+- =D= - delete file
+- =d= - mark for deletion
+- =x= - delete
+- =m= - mark
+- =t= - toggle mark
+- =u= - unmark
+- =k= - hide files (does not delete)
+- =g= - reload dired
+- =M= - modify permissions (chmod syntax)
+- =C-x C-q= - make buffer writeable, then use =C-c C-c= to save changes
+
+#+begin_src emacs-lisp
   (add-hook 'dired-mode-hook #'dired-hide-details-mode)
-  ;; R - rename/relocate file
-  ;; C - copy file
-  ;; D - delete file
-  ;; d - mark for deletion
-  ;; x - delete
-  ;; m - mark
-  ;; t - toggle mark
-  ;; u - unmark
-  ;; k - hide files (does not delete)
-  ;; g - reload dired
-  ;; M - modify permissions (chmod syntax)
-  ;; C-x C-q - make buffer writeable, then use C-c C-c to save changes
+#+end_src
 
-  ;; M-n inserts the filepath under point into minibuffer
-
-
+** Magit
+#+begin_src emacs-lisp
   (use-package magit)
+#+end_src
 
-  ;; always keep this at the end so customizations stay
+** Org Mode
+#+begin_src emacs-lisp
+  (defun vitix/org-mode-setup ()
+    (org-indent-mode)
+    (variable-pitch-mode)
+    (vitix/init-fonts)
+    (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
+    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+    )
+  (use-package org
+    :hook (org-mode . vitix/org-mode-setup)
+    :config
+    (setq org-hide-emphasis-markers t)
+    )
+#+end_src
+
+This package emulates a WYSIWYG editor. More options can be found on [[https://github.com/awth13/org-appear][GitHub]].
+#+begin_src emacs-lisp
+  (use-package org-appear
+    :init
+    (add-hook 'org-mode-hook 'org-appear-mode)
+    )
+#+end_src
+
+** Custom File (2)
+This line must always be kept at the end so customizations stay.
+
+#+begin_src emacs-lisp
   (load custom-file)
 #+end_src
+
+** Other Stuff
+- =M-n= inserts the filepath under point into minibuffer
