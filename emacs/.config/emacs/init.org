@@ -8,7 +8,6 @@
 - [ ] LSP
 - [ ] Treesitter?
 - [ ] Harpoon
-- [ ] Org heading size variety
 
 * Installation
 
@@ -18,15 +17,15 @@
 Before using this configuration, please ensure that Emacs v30.1 is installed. On Debian this can be achieved via [[https://backports.debian.org/Instructions/][backports]].
 
 *** Font Installation
-This configuration uses *Iosevka* fonts, which can be installed as follows:
+This configuration uses *Inter* and *JetBrains Mono*, which can be installed as follows:
 
 #+begin_src sh :tangle no
-  wget https://github.com/be5invis/Iosevka/releases/download/v33.2.2/PkgTTF-IosevkaAile-33.2.2.zip
-  unzip PkgTTF-IosevkaAile-33.2.2.zip
-  wget https://github.com/be5invis/Iosevka/releases/download/v33.2.2/PkgTTF-IosevkaFixedSS14-33.2.2.zip
-  unzip PkgTTF-IosevkaFixedSS14-33.2.2.zip
   mkdir -p ~/.local/share/fonts
-  mv *.ttf ~/.local/share/fonts/
+  cd ~/.local/share/fonts
+  wget https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip
+  unzip Inter-4.1.zip
+  wget https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip
+  unzip JetBrainsMono-2.304.zip
   fc-cache -f -v
 #+end_src
 
@@ -71,7 +70,7 @@ This is loaded later in the configuration, at the end.
   (setq use-package-always-ensure t)
 #+end_src
 
-* Theming
+** Theming
 This includes various graphical customizations, including fonts.
 
 #+begin_src emacs-lisp
@@ -90,11 +89,13 @@ This includes various graphical customizations, including fonts.
   (defun vitix/init-fonts ()
     (setq vitix/fixed-font-height 150)
     (setq vitix/variable-font-height 140)
-    (set-face-attribute 'default nil :font "Iosevka Fixed SS14" :height vitix/fixed-font-height)
-    (set-face-attribute 'fixed-pitch nil :font "Iosevka Fixed SS14" :height vitix/fixed-font-height)
-    (set-face-attribute 'line-number nil :font "Iosevka Fixed SS14" :height vitix/fixed-font-height)
-    (set-face-attribute 'line-number-current-line nil :font "Iosevka Fixed SS14" :height vitix/fixed-font-height)
-    (set-face-attribute 'variable-pitch nil :font "Iosevka Aile" :height vitix/variable-font-height)
+    (setq vitix/fixed-font "JetBrains Mono")
+    (setq vitix/variable-font "Inter")
+    (set-face-attribute 'default nil :font vitix/fixed-font :height vitix/fixed-font-height)
+    (set-face-attribute 'fixed-pitch nil :font vitix/fixed-font :height vitix/fixed-font-height)
+    (set-face-attribute 'line-number nil :font vitix/fixed-font  :height vitix/fixed-font-height)
+    (set-face-attribute 'line-number-current-line nil :font vitix/fixed-font :height vitix/fixed-font-height)
+    (set-face-attribute 'variable-pitch nil :font vitix/variable-font :height vitix/variable-font-height)
     )
   (vitix/init-fonts)
 #+end_src
@@ -262,8 +263,17 @@ Useful keys:
     (org-indent-mode)
     (variable-pitch-mode)
     (vitix/init-fonts)
-    (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-    (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+    (dolist (face '((org-level-1 . 2.0)
+                    (org-level-2 . 1.5)
+                    (org-level-3 . 1.25)
+                    (org-level-4 . 1.0)
+                    (org-level-5 . 1.0)
+                    (org-level-6 . 1.0)
+                    (org-level-7 . 1.0)
+                    (org-level-8 . 1.0)))
+    (set-face-attribute (car face) nil :font vitix/variable-font :height (cdr face)))
+    (set-face-attribute 'org-block nil :foreground nil :background "unspecified-bg" :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
     (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
     (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
     (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
@@ -274,6 +284,7 @@ Useful keys:
     :hook (org-mode . vitix/org-mode-setup)
     :config
     (setq org-hide-emphasis-markers t)
+    (setq org-src-preserve-indentation t)
     )
 #+end_src
 
@@ -283,6 +294,22 @@ This package emulates a WYSIWYG editor. More options can be found on [[https://g
     :init
     (add-hook 'org-mode-hook 'org-appear-mode)
     )
+#+end_src
+
+Special UTF-8 headings:
+#+begin_src emacs-lisp
+  (use-package org-bullets
+    :after org
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+#+end_src
+
+Using =C-c C-,= I can insert code blocks with the following values:
+#+begin_src emacs-lisp
+(setq org-structure-template-alist '(("s" . "src")
+				     ("e" . "src emacs-lisp")
+				     ("p" . "src python")))
 #+end_src
 
 ** Custom File (2)
