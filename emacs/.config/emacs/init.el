@@ -25,8 +25,8 @@
   (setq-default display-line-numbers 'relative)
 
   (defun vitix/init-fonts ()
-    (setq vitix/fixed-font-height 140)
-    (setq vitix/variable-font-height 140)
+    (setq vitix/fixed-font-height 120)
+    (setq vitix/variable-font-height 120)
     (setq vitix/fixed-font "JetBrains Mono")
     (setq vitix/variable-font "Inter")
     (set-face-attribute 'default nil :font vitix/fixed-font :height vitix/fixed-font-height)
@@ -40,22 +40,6 @@
   (use-package nerd-icons-dired
     :hook
     (dired-mode . nerd-icons-dired-mode))
-   (use-package doom-modeline
-     :config
-     (setq doom-modeline-modal-modern-icon nil)
-     (setq doom-modeline-height 25)
-     (setq doom-modeline-position-line-format '(""))
-     (setq doom-modeline-percent-position '(-3 ""))
-     :init
-     (doom-modeline-mode 1))
-
-  ;; (use-package doom-themes
-  ;;   :config
-  ;;   (setq doom-themes-enable-bold t)
-  ;;   (setq doom-themes-enable-italic t)
-  ;;   (load-theme 'doom-gruvbox t)
-  ;;   (doom-themes-org-config))
-
 
   (use-package ef-themes
     :init
@@ -75,9 +59,13 @@
     (ef-themes-load-theme 'ef-dream)
     )
 
-  (use-package spacious-padding
-    :init
-    (spacious-padding-mode 1))
+ (use-package doom-modeline
+   :config
+   (setq doom-modeline-modal-modern-icon nil)
+   (setq doom-modeline-position-line-format '(""))
+   (setq doom-modeline-percent-position '(-3 ""))
+   :init
+   (doom-modeline-mode 1))
 
   (setq make-backup-files nil)
   (use-package undo-tree
@@ -95,6 +83,7 @@
     (evil-mode 1)
     (evil-global-set-key 'motion "j" 'evil-next-visual-line)
     (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+    (define-key evil-motion-state-map (kbd "RET") nil)
     )
 
   ;; vterm requires libtool-bin
@@ -120,49 +109,13 @@
     (completion-styles '(orderless basic))
     (completion-category-overrides '((file (styles basic partial-completion)))))
 
-  ;; Keybinds
-  (which-key-mode t)
-  (use-package general
-    :config
-    (general-evil-setup t)
-    (general-create-definer vitix/keymap
-      :keymaps '(normal insert visual emacs)
-      :prefix "SPC"
-      :global-prefix "C-SPC")
-    (vitix/keymap
-      "SPC" '(consult-buffer :which-key "Consult Buffer")
-      "C-SPC" '(consult-buffer :which-key "Consult Buffer")
-      "f" '(consult-find :which-key "Consult [F]ind")
-      "t" '(vterm :which-key "[T]erminal")
-      "e" '(ef-themes-toggle :which-key "[E]f Themes Toggle")
-
-      "h" '(:ignore t :which-key "[H]arpoon")
-      "hs" '(bookmark-save :which-key "Harpoon [S]ave")
-      "hl" '(bookmark-load :which-key "Harpoon [L]oad")
-      "hf" '(consult-bookmark :which-key "Harpoon [F]ind")
-      "hd" '(bookmark-delete :which-key "Harpoon [D]elete")
-      )
-
-    (general-define-key
-     :states 'normal
-     "-" #'dired-jump
-     "zf" #'evil-toggle-fold)
-
-    (general-define-key
-     :keymaps 'dired-mode-map
-     "-" #'dired-up-directory)
-
-    (general-define-key
-     :keymaps 'vterm-mode-map
-     "C-S-v" #'vterm-yank)
-    )
-
   (add-hook 'dired-mode-hook #'dired-hide-details-mode)
 
   (use-package magit)
 
   (defun vitix/org-mode-setup ()
     (variable-pitch-mode)
+    (vitix/init-fonts)
     (org-indent-mode)
     )
   (use-package org
@@ -170,6 +123,8 @@
     :config
     (setq org-hide-emphasis-markers t)
     (setq org-src-preserve-indentation t)
+    (setq org-return-follows-link t)
+    (setq org-startup-truncated nil)
     )
 
   (use-package org-appear
@@ -217,6 +172,92 @@
     (setq denote-journal-directory nil)
     (setq denote-journal-keyword "journal")
     (setq denote-journal-title-format 'day-date-month-year)
+    )
+
+  (add-to-list 'exec-path "/home/eli/.volta/bin")
+  (add-to-list 'exec-path "/home/eli/.local/bin")
+
+(use-package lsp-mode
+  :init
+  (setq lsp-keymap-prefix "C-l")
+  (setq lsp-headerline-breadcrumb-enable nil)
+  (setq gc-cons-threshold 100000000)
+  :hook
+  (python-mode . lsp)
+  (c-mode . lsp)
+  (c++-mode . lsp)
+  (lsp-mode . lsp-enable-which-key-integration)
+  :commands lsp)
+
+(use-package lsp-ui
+  :init
+  (setq lsp-ui-doc-position 'at-point)
+  :commands lsp-ui-mode)
+
+(use-package company
+  :config
+  (setq company-minimum-prefix-length 1)
+  (setq company-idle-delay 0.0)
+  )
+
+(use-package flycheck
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
+
+  (use-package pyvenv
+    :config
+    (pyvenv-mode 1))
+
+  (use-package lsp-pyright
+    :custom (lsp-pyright-langserver-command "pyright")
+    :hook (python-mode . (lambda ()
+                            (require 'lsp-pyright)
+                            (lsp))))
+
+  ;; Keybinds
+  (which-key-mode t)
+  (use-package general
+    :config
+    (general-evil-setup t)
+    (general-create-definer vitix/keymap
+      :keymaps '(normal insert visual emacs)
+      :prefix "SPC"
+      :global-prefix "C-SPC")
+    (vitix/keymap
+      "SPC" '(consult-buffer :which-key "Consult Buffer")
+      "C-SPC" '(consult-buffer :which-key "Consult Buffer")
+      "f" '(consult-find :which-key "Consult [F]ind")
+      "t" '(vterm :which-key "[T]erminal")
+      "e" '(ef-themes-toggle :which-key "[E]f Themes Toggle")
+
+      "h" '(:ignore t :which-key "[H]arpoon")
+      "hs" '(bookmark-save :which-key "Harpoon [S]ave")
+      "hl" '(bookmark-load :which-key "Harpoon [L]oad")
+      "hf" '(consult-bookmark :which-key "Harpoon [F]ind")
+      "hd" '(bookmark-delete :which-key "Harpoon [D]elete")
+
+      "pa" '(pyvenv-activate :which-key "[P]yvenv [A]ctivate")
+      "pd" '(pyvenv-deactivate :which-key "[P]yvenv [D]eactivate")
+
+      "lrr" '(lsp-workspace-restart :which-key "LSP [R]estart")
+      "lrn" '(lsp-rename :which-key "LSP [R]ename")
+      "ls" '(lsp :which-key "LSP [S]tart")
+      "lca" '(lsp-execute-code-action :which-key "LSP [C]ode [A]ction")
+      )
+
+    (general-define-key
+     :states 'normal
+     "-" #'dired-jump
+     "K" #'lsp-ui-doc-glance
+     "zf" #'evil-toggle-fold)
+
+    (general-define-key
+     :keymaps 'dired-mode-map
+     "-" #'dired-up-directory)
+
+    (general-define-key
+     :keymaps 'vterm-mode-map
+     "C-S-v" #'vterm-yank)
     )
 
   (load custom-file)
