@@ -1,16 +1,11 @@
 #+title: Emacs Configuration
 #+property: header-args :tangle "init.el"
 
-* Future Tasks
+* Future Features
+Things I might be interested in setting up
 
-- [ ] Tasking - within journal notes?
-- [ ] Org dynamic blocks
-- [ ] Org capture
-  - tasks with category and due date
-  - writing ideas, lyrics, and characters
-- [ ] Treesitter?
-- [ ] Harpoon
-- [ ] Increase title font size in Org Properties
+- Treesitter?
+- Harpoon
 
 * Installation
 
@@ -249,6 +244,7 @@ Useful keys:
     (setq org-src-preserve-indentation t)
     (setq org-return-follows-link t)
     (setq org-startup-truncated nil)
+    (setq org-directory "~/tome")
     )
 #+end_src
 
@@ -274,6 +270,46 @@ Using =C-c C-,= I can insert code blocks with the following values:
 (setq org-structure-template-alist '(("s" . "src")
 				     ("e" . "src emacs-lisp")
 				     ("p" . "src python")))
+#+end_src
+
+*** Org Capture
+[[https://orgmode.org/manual/Capture.html][Documentation]]
+
+#+begin_src emacs-lisp
+  (use-package org-capture
+    :ensure nil ; org-capture comes with emacs, just use this to configure it
+    :config
+    (setq org-capture-templates
+	  '(("l" "Log" entry
+	    (file+headline denote-journal-path-to-new-or-existing-entry "Log")
+	    "* %<%I:%M %p> - %?"
+	    )
+	    ("t" "Task" entry
+	    (file+headline denote-journal-path-to-new-or-existing-entry "Task")
+            "* TODO %?"
+	    )))
+    :bind
+    ("C-c c" . org-capture))
+
+#+end_src
+
+*** Org Agenda
+
+In the future, I'd like to make a more in-depth agenda config.
+
+#+begin_src emacs-lisp
+  (setq org-todo-keywords '((sequence
+			     "TODO(t)"
+			     "WAIT(w@/!)"
+			     "|"
+			     "DONE(d/!)"
+			     "STOP(s@/!)")))
+  (use-package org-agenda
+    :ensure nil
+    :config
+    (setq org-agenda-files (list org-directory))
+    :bind
+    ("C-c a" . org-agenda))
 #+end_src
 
 ** Denote

@@ -125,6 +125,7 @@
     (setq org-src-preserve-indentation t)
     (setq org-return-follows-link t)
     (setq org-startup-truncated nil)
+    (setq org-directory "~/tome")
     )
 
   (use-package org-appear
@@ -141,6 +142,34 @@
 (setq org-structure-template-alist '(("s" . "src")
 				     ("e" . "src emacs-lisp")
 				     ("p" . "src python")))
+
+  (use-package org-capture
+    :ensure nil ; org-capture comes with emacs, just use this to configure it
+    :config
+    (setq org-capture-templates
+	  '(("l" "Log" entry
+	    (file+headline denote-journal-path-to-new-or-existing-entry "Log")
+	    "* %<%I:%M %p> - %?"
+	    )
+	    ("t" "Task" entry
+	    (file+headline denote-journal-path-to-new-or-existing-entry "Task")
+            "* TODO %?"
+	    )))
+    :bind
+    ("C-c c" . org-capture))
+
+  (setq org-todo-keywords '((sequence
+			     "TODO(t)"
+			     "WAIT(w@/!)"
+			     "|"
+			     "DONE(d/!)"
+			     "STOP(s@/!)")))
+  (use-package org-agenda
+    :ensure nil
+    :config
+    (setq org-agenda-files (list org-directory))
+    :bind
+    ("C-c a" . org-agenda))
 
   (use-package denote
     :hook (dired-mode . denote-dired-mode)
