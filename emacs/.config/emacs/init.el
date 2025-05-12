@@ -2,6 +2,7 @@
 
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
   			 ("melpa-stable" . "https://stable.melpa.org/packages/")
+			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
   			 ("org" . "https://orgmode.org/elpa/")
   			 ("elpa" . "https://elpa.gnu.org/packages/")))
   (package-initialize)
@@ -75,23 +76,31 @@
     :init
     (global-undo-tree-mode))
 
-  (use-package evil
-    :init
-    (setq evil-undo-system 'undo-tree)
-    (setq evil-want-C-u-scroll t)
-    (setq evil-want-Y-yank-to-eol t)
-    :config
-    (evil-mode 1)
-    (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-    (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-    (define-key evil-motion-state-map (kbd "RET") nil)
-    )
+(defun insert-semicolon ()
+  "Insert a semicolon character."
+  (interactive)
+  (insert ";"))
 
-  ;; vterm requires libtool-bin
-  (use-package vterm
-    :config
-    (setq vterm-shell "/usr/bin/fish")
-    )
+(global-set-key (kbd "C-;") #'insert-semicolon)
+
+(use-package god-mode
+  :config
+  (god-mode)
+  (define-key god-local-mode-map (kbd ";") #'god-local-mode)
+  (define-key god-local-mode-map (kbd ".") #'repeat)
+  (global-set-key (kbd "C-x C-1") #'delete-other-windows)
+  (global-set-key (kbd "C-x C-2") #'split-window-below)
+  (global-set-key (kbd "C-x C-3") #'split-window-right)
+  (global-set-key (kbd "C-x C-0") #'delete-window)
+  (global-set-key (kbd "C-o") #'other-window)
+  (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
+  (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
+  )
+
+(use-package expand-region
+  :bind ("C-=" . er/expand-region))
+
+(use-package eat)
 
   (use-package vertico
     :init
@@ -110,7 +119,7 @@
     (completion-styles '(orderless basic))
     (completion-category-overrides '((file (styles basic partial-completion)))))
 
-  (add-hook 'dired-mode-hook #'dired-hide-details-mode)
+(add-hook 'dired-mode-hook #'dired-hide-details-mode)
 
   (use-package magit)
 
@@ -128,7 +137,9 @@
     (setq org-return-follows-link t)
     (setq org-startup-truncated nil)
     (setq org-directory "~/tome")
-    )
+    :bind
+    ("C-c C-h" . #'org-fold-hide-entry)
+    ("C-c C-s" . #'org-fold-show-entry))
 
   (use-package org-appear
     :init
@@ -221,21 +232,26 @@
 (add-to-list 'exec-path "/home/eli/.volta/bin")
 (add-to-list 'exec-path "/home/eli/.local/bin")
 
-(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+;; (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
 
 (use-package eglot
   :ensure nil
   :config
-  (global-eldoc-mode t))
+  (global-eldoc-mode t)
+  :bind
+  (("C-c e r" . #'eglot-rename)
+  ("C-c e f n" . #'flymake-goto-next-error)
+  ("C-c e f p" . #'flymake-goto-prev-error)
+  ("C-c e c" . #'eglot-code-actions)
+  ("C-c e d" . #'xref-find-definitions)
+  ("C-c e k" . #'eldoc)))
 
 (use-package corfu
   :bind (:map corfu-map
               ("M-SPC" . corfu-insert-separator)
               ("M-y" . corfu-insert)
               ("RET" . nil))
-
   :init
-  (setq corfu-auto t)
   (global-corfu-mode t)
   (corfu-history-mode t))
 
@@ -248,58 +264,24 @@
   )
 
 (which-key-mode t)
-(use-package general
-  :config
-  (general-evil-setup t)
-  (general-create-definer vitix/keymap
-    :keymaps '(normal insert visual emacs)
-    :prefix "SPC"
-    :global-prefix "C-SPC")
-  (vitix/keymap
-    "SPC" '(consult-buffer :which-key "Consult Buffer")
-    "C-SPC" '(consult-buffer :which-key "Consult Buffer")
-    "f" '(consult-find :which-key "Consult [F]ind")
-    "t" '(vterm :which-key "[T]erminal")
-    "e" '(ef-themes-toggle :which-key "[E]f Themes Toggle")
 
-    "h" '(:ignore t :which-key "[H]arpoon")
-    "hs" '(bookmark-save :which-key "Harpoon [S]ave")
-    "hl" '(bookmark-load :which-key "Harpoon [L]oad")
-    "hf" '(consult-bookmark :which-key "Harpoon [F]ind")
-    "hd" '(bookmark-delete :which-key "Harpoon [D]elete")
+(defvar-keymap vitix/harpoon-keymap
+  :doc "Harpoon, but its actually bookmarks"
+  "C-s" #'bookmark-save
+  "C-l" #'bookmark-load
+  "C-f" #'consult-bookmark
+  "C-d" #'bookmark-delete)
 
-    "pa" '(pyvenv-activate :which-key "[P]yvenv [A]ctivate")
-    "pd" '(pyvenv-deactivate :which-key "[P]yvenv [D]eactivate")
+(defvar-keymap vitix/prefix-keymap
+  :doc "My custom keymap!"
+  "C-b" #'consult-buffer
+  "C-t" #'eat
+  "C--" #'dired-jump
+  "C-S-t" #'ef-themes-toggle
+  "C-e" #'eglot
+  "C-h" vitix/harpoon-keymap)
 
-    "lrr" '(lsp-workspace-restart :which-key "LSP [R]estart")
-    "lrn" '(lsp-rename :which-key "LSP [R]ename")
-    "ls" '(lsp :which-key "LSP [S]tart")
-    "lca" '(lsp-execute-code-action :which-key "LSP [C]ode [A]ction")
-    )
-
-  (general-define-key
-   :states 'normal
-   "-" #'dired-jump
-   "C-c e e" #'eglot
-   "zf" #'evil-toggle-fold)
-
-  (general-define-key
-   :keymaps 'dired-mode-map
-   "-" #'dired-up-directory)
-
-  (general-define-key
-   :keymaps 'vterm-mode-map
-   "C-S-v" #'vterm-yank)
-
-  (general-define-key
-   :keymaps 'eglot-mode-map
-   "C-c e r" #'eglot-rename
-   "C-c e f n" #'flymake-goto-next-error
-   "C-c e f p" #'flymake-goto-prev-error
-   "C-c e c" #'eglot-code-actions
-   "C-c e d" #'xref-find-definitions
-   "C-c e k" #'eldoc
-   )
-  )
+(keymap-set global-map "C-t" vitix/prefix-keymap)
+(define-key dired-mode-map (kbd "-") #'dired-up-directory)
 
 (load custom-file)
