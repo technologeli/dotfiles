@@ -36,38 +36,102 @@
     )
   (vitix/init-fonts)
 
-  ;; run M-x nerd-icons-install-fonts after installing
-  (use-package nerd-icons)
-  (use-package nerd-icons-dired
-    :hook
-    (dired-mode . nerd-icons-dired-mode))
+;; run M-x nerd-icons-install-fonts after installing
+(use-package nerd-icons)
+(use-package nerd-icons-dired
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
 
-  (use-package ef-themes
-    :init
-    (setq ef-themes-mixed-fonts t)
-    (setq ef-themes-bold-constructs t)
-    (setq ef-themes-italic-constructs t)
-    (setq ef-themes-variable-pitch-ui nil)
-    (setq ef-themes-prompts '(bold))
-    (setq ef-themes-completions '((matches . (bold))
-				     (selection . ())))
-    (setq ef-themes-to-toggle '(ef-dream ef-kassio))
-    (setq ef-themes-headings '((0 . (1.75))
-			       (1 . (1.2))
-			       (2 . (1.15))
-			       (3 . (1.1))
-			       (t . (1.05))))
-    :config
-    (ef-themes-load-theme 'ef-dream)
-    )
+(use-package ef-themes
+  :init
+  (setq ef-themes-mixed-fonts t)
+  (setq ef-themes-bold-constructs t)
+  (setq ef-themes-italic-constructs t)
+  (setq ef-themes-variable-pitch-ui nil)
+  (setq ef-themes-prompts '(bold))
+  (setq ef-themes-completions '((matches . (bold))
+                                           (selection . ())))
+  (setq ef-themes-to-toggle '(ef-dream ef-kassio))
+  (setq ef-themes-headings '((0 . (1.75))
+                             (1 . (1.2))
+                             (2 . (1.15))
+                             (3 . (1.1))
+                             (t . (1.05))))
+  :config
+  (ef-themes-load-theme 'ef-dream))
 
- (use-package doom-modeline
-   :config
-   (setq doom-modeline-modal-modern-icon nil)
-   (setq doom-modeline-position-line-format '(""))
-   (setq doom-modeline-percent-position '(-3 ""))
-   :init
-   (doom-modeline-mode 1))
+(use-package spacious-padding
+  :config
+  (spacious-padding-mode 1))
+
+(defun vitix/window (function)
+  (when (mode-line-window-selected-p)
+    (eval function)))
+
+(defface vitix/modeline-highlighted-face
+    `((t
+       :background ,(ef-themes-get-color-value 'fg-alt)
+       :foreground ,(ef-themes-get-color-value 'bg-main)
+       :inherit bold))
+    "Face for a highlighted background for the modeline")
+
+(defvar-local vitix/modeline-buffer-name
+    '(:eval (propertize (buffer-name) 'face 'bold)))
+
+(defvar-local vitix/modeline-major-mode
+    '(:eval
+      (vitix/window
+	'(propertize
+	 (capitalize (replace-regexp-in-string "-mode" "" (symbol-name major-mode)))
+	 'face 'bold))))
+
+(defvar-local vitix/modeline-god-mode
+    '(:eval
+      (vitix/window
+       '(propertize
+	 (when (bound-and-true-p god-local-mode) " G ")
+	 'face 'vitix/modeline-highlighted-face))))
+
+(defvar-local vitix/modeline-buffer-modified
+    '(:eval
+      (vitix/window
+       '(propertize (when (and (buffer-modified-p) (buffer-file-name)) " * ")
+	            'face 'vitix/modeline-highlighted-face))))
+
+(defun vitix/eat-minor-mode ()
+    (cond (eat--semi-char-mode " (semi-char)")
+	  (eat--char-mode " (char)")
+	  (eat--line-mode " (line)")
+	  (t " (emacs)")
+	  ))
+
+(defvar-local vitix/modeline-eat-minor-mode
+    '(:eval
+      (vitix/window
+       '(propertize
+	 (when (string-equal (symbol-name major-mode) "eat-mode")
+	   (vitix/eat-minor-mode))))))
+
+(dolist (var '(vitix/modeline-god-mode
+	       vitix/modeline-buffer-name
+	       vitix/modeline-major-mode
+	       vitix/modeline-eat-minor-mode
+	       vitix/modeline-buffer-modified))
+  (put var 'risky-local-variable t))
+
+(setq-default
+ mode-line-format
+ '("%e"
+   vitix/modeline-god-mode
+   " "
+   vitix/modeline-buffer-name
+   " "
+   vitix/modeline-buffer-modified
+   mode-line-format-right-align
+   vitix/modeline-major-mode
+   vitix/modeline-eat-minor-mode
+   "  "
+   ))
 
   (setq make-backup-files nil)
   (use-package undo-tree
@@ -86,6 +150,7 @@
 (use-package god-mode
   :config
   (god-mode)
+  (global-set-key (kbd ";") #'god-local-mode)
   (define-key god-local-mode-map (kbd ";") #'god-local-mode)
   (define-key god-local-mode-map (kbd ".") #'repeat)
   (global-set-key (kbd "C-x C-1") #'delete-other-windows)
@@ -95,6 +160,8 @@
   (global-set-key (kbd "C-o") #'other-window)
   (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
   (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
+  (which-key-mode t)
+  (which-key-enable-god-mode-support)
   )
 
 (use-package expand-region
@@ -262,8 +329,6 @@
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-elisp-block)
   )
-
-(which-key-mode t)
 
 (defvar-keymap vitix/harpoon-keymap
   :doc "Harpoon, but its actually bookmarks"

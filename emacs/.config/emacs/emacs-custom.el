@@ -8,7 +8,7 @@
 	  doom-modeline eat ef-themes evil expand-region flycheck
 	  general god-mode lsp-pyright lsp-ui magit marginalia
 	  nerd-icons-dired orderless org-appear org-bullets pyvenv
-	  undo-tree vertico vterm)))
+	  spacious-padding undo-tree vertico vterm)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
