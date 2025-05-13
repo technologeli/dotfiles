@@ -50,7 +50,7 @@
   (setq ef-themes-variable-pitch-ui nil)
   (setq ef-themes-prompts '(bold))
   (setq ef-themes-completions '((matches . (bold))
-                                           (selection . ())))
+                                (selection . ())))
   (setq ef-themes-to-toggle '(ef-dream ef-kassio))
   (setq ef-themes-headings '((0 . (1.75))
                              (1 . (1.2))
@@ -60,9 +60,14 @@
   :config
   (ef-themes-load-theme 'ef-dream))
 
-(use-package spacious-padding
-  :config
-  (spacious-padding-mode 1))
+(use-package spacious-padding)
+  
+(defun spacious-padding-workaround ()
+  "Workaround issues with `spacious-padding-mode' when using emacsclient."
+  (when server-mode
+    (spacious-padding-mode 1)
+    (remove-hook 'server-after-make-frame-hook #'spacious-padding-workaround)))
+(add-hook 'server-after-make-frame-hook #'spacious-padding-workaround)
 
 (defun vitix/window (function)
   (when (mode-line-window-selected-p)

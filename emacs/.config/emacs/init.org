@@ -111,7 +111,7 @@ In the future, I may use [[https://protesilaos.com/emacs/fontaine][fontaine]] to
   (setq ef-themes-variable-pitch-ui nil)
   (setq ef-themes-prompts '(bold))
   (setq ef-themes-completions '((matches . (bold))
-                                           (selection . ())))
+                                (selection . ())))
   (setq ef-themes-to-toggle '(ef-dream ef-kassio))
   (setq ef-themes-headings '((0 . (1.75))
                              (1 . (1.2))
@@ -120,13 +120,23 @@ In the future, I may use [[https://protesilaos.com/emacs/fontaine][fontaine]] to
                              (t . (1.05))))
   :config
   (ef-themes-load-theme 'ef-dream))
+#+end_src
 
-(use-package spacious-padding
-  :config
-  (spacious-padding-mode 1))
+Shout out to [[https://github.com/protesilaos/spacious-padding/issues/9#issuecomment-2016613020][this GitHub comment]]!
+#+begin_src emacs-lisp
+(use-package spacious-padding)
+  
+(defun spacious-padding-workaround ()
+  "Workaround issues with `spacious-padding-mode' when using emacsclient."
+  (when server-mode
+    (spacious-padding-mode 1)
+    (remove-hook 'server-after-make-frame-hook #'spacious-padding-workaround)))
+(add-hook 'server-after-make-frame-hook #'spacious-padding-workaround)
 #+end_src
 
 *** Modeline
+Shout out to [[https://protesilaos.com/codelog/2023-07-29-emacs-custom-modeline-tutorial/][this tutorial]]!
+
 A helper function to only display a function if it is the current buffer.
 #+begin_src emacs-lisp
 (defun vitix/window (function)
@@ -222,9 +232,6 @@ Set the mode line for real
    ))
 #+end_src
 
-Things to do:
-- eat mode =eat--semi-char-mode= etc
-
 ** Undo Tree
 
 #+begin_src emacs-lisp
@@ -238,6 +245,8 @@ Things to do:
 
 ** ** God Mode
 lol
+
+Shout out to [[https://www.youtube.com/watch?v=KU3POHoVKls&t=75s&pp=ygUOZW1hY3MgZ29kLW1vZGU%3D][this tutoria]]l for the =C-;= recommendation!
 
 #+begin_src emacs-lisp
 (defun insert-semicolon ()
