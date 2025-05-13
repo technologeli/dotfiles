@@ -65,8 +65,7 @@
 (defun spacious-padding-workaround ()
   "Workaround issues with `spacious-padding-mode' when using emacsclient."
   (when server-mode
-    (spacious-padding-mode 1)
-    (remove-hook 'server-after-make-frame-hook #'spacious-padding-workaround)))
+    (spacious-padding-mode 1)))
 (add-hook 'server-after-make-frame-hook #'spacious-padding-workaround)
 
 (defun vitix/window (function)
@@ -90,11 +89,11 @@
 	 (capitalize (replace-regexp-in-string "-mode" "" (symbol-name major-mode)))
 	 'face 'bold))))
 
-(defvar-local vitix/modeline-god-mode
+(defvar-local vitix/modeline-meow-mode
     '(:eval
       (vitix/window
        '(propertize
-	 (if (bound-and-true-p god-local-mode) " G " "")
+	 (if (bound-and-true-p meow-mode) " M " "")
 	 'face 'vitix/modeline-highlighted-face))))
 
 (defvar-local vitix/modeline-buffer-modified
@@ -118,7 +117,7 @@
 	   (vitix/eat-minor-mode)
 	   "")))))
 
-(dolist (var '(vitix/modeline-god-mode
+(dolist (var '(vitix/modeline-meow-mode
 	       vitix/modeline-buffer-name
 	       vitix/modeline-major-mode
 	       vitix/modeline-eat-minor-mode
@@ -128,7 +127,7 @@
 (setq-default
  mode-line-format
  '("%e"
-   vitix/modeline-god-mode
+   vitix/modeline-meow-mode
    " "
    vitix/modeline-buffer-name
    " "
@@ -146,34 +145,96 @@
     :init
     (global-undo-tree-mode))
 
-(defun insert-semicolon ()
-  "Insert a semicolon character."
-  (interactive)
-  (insert ";"))
+(defun meow-setup ()
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-colemak-dh)
+  (meow-motion-define-key
+   ;; Use e to move up, n to move down.
+   ;; Since special modes usually use n to move down, we only overwrite e here.
+   '("e" . meow-prev)
+   '("<escape>" . ignore))
+  (meow-leader-define-key
+   '("?" . meow-cheatsheet)
+   '("1" . meow-digit-argument)
+   '("2" . meow-digit-argument)
+   '("3" . meow-digit-argument)
+   '("4" . meow-digit-argument)
+   '("5" . meow-digit-argument)
+   '("6" . meow-digit-argument)
+   '("7" . meow-digit-argument)
+   '("8" . meow-digit-argument)
+   '("9" . meow-digit-argument)
+   '("0" . meow-digit-argument))
+  (meow-normal-define-key
+   '("0" . meow-expand-0)
+   '("1" . meow-expand-1)
+   '("2" . meow-expand-2)
+   '("3" . meow-expand-3)
+   '("4" . meow-expand-4)
+   '("5" . meow-expand-5)
+   '("6" . meow-expand-6)
+   '("7" . meow-expand-7)
+   '("8" . meow-expand-8)
+   '("9" . meow-expand-9)
+   '("-" . negative-argument)
+   '(";" . meow-reverse)
+   '("," . meow-inner-of-thing)
+   '("." . meow-bounds-of-thing)
+   '("[" . meow-beginning-of-thing)
+   '("]" . meow-end-of-thing)
+   '("/" . meow-visit)
+   '("a" . meow-append)
+   '("A" . meow-open-below)
+   '("b" . meow-back-word)
+   '("B" . meow-back-symbol)
+   '("c" . meow-change)
+   '("e" . meow-prev)
+   '("E" . meow-prev-expand)
+   '("f" . meow-find)
+   '("g" . meow-cancel-selection)
+   '("G" . meow-grab)
+   '("m" . meow-left)
+   '("M" . meow-left-expand)
+   '("i" . meow-right)
+   '("I" . meow-right-expand)
+   '("j" . meow-join)
+   '("k" . meow-kill)
+   '("l" . meow-line)
+   '("L" . meow-goto-line)
+   '("h" . meow-mark-word)
+   '("H" . meow-mark-symbol)
+   '("n" . meow-next)
+   '("N" . meow-next-expand)
+   '("o" . meow-block)
+   '("O" . meow-to-block)
+   '("p" . meow-yank)
+   '("q" . meow-quit)
+   '("r" . meow-replace)
+   '("s" . meow-insert)
+   '("S" . meow-open-above)
+   '("t" . meow-till)
+   '("u" . meow-undo)
+   '("U" . meow-undo-in-selection)
+   '("v" . meow-search)
+   '("w" . meow-next-word)
+   '("W" . meow-next-symbol)
+   '("x" . meow-delete)
+   '("X" . meow-backward-delete)
+   '("y" . meow-save)
+   '("z" . meow-pop-selection)
+   '("'" . repeat)
+   '("<escape>" . ignore)))
 
-(global-set-key (kbd "C-;") #'insert-semicolon)
-
-(use-package god-mode
+(use-package meow
+  :init
+  (setq meow-expand-hint-remove-delay 0)
   :config
-  (god-mode)
-  (global-set-key (kbd ";") #'god-local-mode)
-  (define-key god-local-mode-map (kbd ";") #'god-local-mode)
-  (define-key god-local-mode-map (kbd ".") #'repeat)
-  (global-set-key (kbd "C-x C-1") #'delete-other-windows)
-  (global-set-key (kbd "C-x C-2") #'split-window-below)
-  (global-set-key (kbd "C-x C-3") #'split-window-right)
-  (global-set-key (kbd "C-x C-0") #'delete-window)
-  (global-set-key (kbd "C-o") #'other-window)
-  (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
-  (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
-  (which-key-mode t)
-  (which-key-enable-god-mode-support)
-  )
+  (meow-setup)
+  (meow-global-mode 1))
 
-(use-package expand-region
-  :bind ("C-=" . er/expand-region))
-
-(use-package eat)
+(use-package eat
+  :bind
+  ("C-c t s" . #'eat-semi-char-mode)
+  ("C-c t" . #'eat-emacs-mode))
 
   (use-package vertico
     :init
@@ -227,7 +288,8 @@
 
 (setq org-structure-template-alist '(("s" . "src")
                                      ("e" . "src emacs-lisp")
-                                     ("p" . "src python")))
+                                     ("p" . "src python")
+				     ("t" . "src sh :tangle no")))
 
 (use-package org-capture
   :ensure nil ; org-capture comes with emacs, just use this to configure it
@@ -305,8 +367,6 @@
 (add-to-list 'exec-path "/home/eli/.volta/bin")
 (add-to-list 'exec-path "/home/eli/.local/bin")
 
-;; (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-
 (use-package eglot
   :ensure nil
   :config
@@ -336,23 +396,26 @@
   (add-hook 'completion-at-point-functions #'cape-elisp-block)
   )
 
+(which-key-mode 1)
 (defvar-keymap vitix/harpoon-keymap
   :doc "Harpoon, but its actually bookmarks"
-  "C-s" #'bookmark-save
-  "C-l" #'bookmark-load
-  "C-f" #'consult-bookmark
-  "C-d" #'bookmark-delete)
+  "s" #'bookmark-save
+  "l" #'bookmark-load
+  "f" #'consult-bookmark
+  "d" #'bookmark-delete)
 
 (defvar-keymap vitix/prefix-keymap
   :doc "My custom keymap!"
-  "C-b" #'consult-buffer
-  "C-t" #'eat
-  "C--" #'dired-jump
-  "C-S-t" #'ef-themes-toggle
-  "C-e" #'eglot
-  "C-h" vitix/harpoon-keymap)
+  "b" #'consult-buffer
+  "t" #'eat
+  "-" #'dired-jump
+  "S-t" #'ef-themes-toggle
+  "e" #'eglot
+  "z" #'meow-global-mode
+  "h" vitix/harpoon-keymap)
 
 (keymap-set global-map "C-t" vitix/prefix-keymap)
+(global-set-key (kbd "C-o") #'other-window)
 (define-key dired-mode-map (kbd "-") #'dired-up-directory)
 
 (use-package view
