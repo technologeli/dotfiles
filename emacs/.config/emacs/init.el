@@ -94,13 +94,13 @@
     '(:eval
       (vitix/window
        '(propertize
-	 (when (bound-and-true-p god-local-mode) " G ")
+	 (if (bound-and-true-p god-local-mode) " G " "")
 	 'face 'vitix/modeline-highlighted-face))))
 
 (defvar-local vitix/modeline-buffer-modified
     '(:eval
       (vitix/window
-       '(propertize (when (and (buffer-modified-p) (buffer-file-name)) " * ")
+       '(propertize (if (and (buffer-modified-p) (buffer-file-name)) " * " "")
 	            'face 'vitix/modeline-highlighted-face))))
 
 (defun vitix/eat-minor-mode ()
@@ -114,8 +114,9 @@
     '(:eval
       (vitix/window
        '(propertize
-	 (when (string-equal (symbol-name major-mode) "eat-mode")
-	   (vitix/eat-minor-mode))))))
+	 (if (string-equal (symbol-name major-mode) "eat-mode")
+	   (vitix/eat-minor-mode)
+	   "")))))
 
 (dolist (var '(vitix/modeline-god-mode
 	       vitix/modeline-buffer-name
@@ -353,5 +354,12 @@
 
 (keymap-set global-map "C-t" vitix/prefix-keymap)
 (define-key dired-mode-map (kbd "-") #'dired-up-directory)
+
+(use-package view
+  :ensure nil
+  :config
+  (define-key global-map (kbd "C-v") #'View-scroll-half-page-forward)
+  (define-key global-map (kbd "M-v") #'View-scroll-half-page-backward)
+  )
 
 (load custom-file)

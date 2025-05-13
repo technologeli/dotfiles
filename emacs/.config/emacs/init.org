@@ -122,7 +122,7 @@ In the future, I may use [[https://protesilaos.com/emacs/fontaine][fontaine]] to
   (ef-themes-load-theme 'ef-dream))
 #+end_src
 
-Shout out to [[https://github.com/protesilaos/spacious-padding/issues/9#issuecomment-2016613020][this GitHub comment]]!
+Shout out to [[https://github.com/protesilaos/spacious-padding/issues/9#issuecomment-2016613020][this GitHub comment]]
 #+begin_src emacs-lisp
 (use-package spacious-padding)
   
@@ -176,7 +176,7 @@ Whether the current buffer is in =god-mode=.
     '(:eval
       (vitix/window
        '(propertize
-	 (when (bound-and-true-p god-local-mode) " G ")
+	 (if (bound-and-true-p god-local-mode) " G " "")
 	 'face 'vitix/modeline-highlighted-face))))
 #+end_src
 
@@ -185,7 +185,7 @@ Whether the current buffer is a file and has been modified.
 (defvar-local vitix/modeline-buffer-modified
     '(:eval
       (vitix/window
-       '(propertize (when (and (buffer-modified-p) (buffer-file-name)) " * ")
+       '(propertize (if (and (buffer-modified-p) (buffer-file-name)) " * " "")
 	            'face 'vitix/modeline-highlighted-face))))
 #+end_src
 
@@ -201,8 +201,9 @@ Whether the current buffer is a file and has been modified.
     '(:eval
       (vitix/window
        '(propertize
-	 (when (string-equal (symbol-name major-mode) "eat-mode")
-	   (vitix/eat-minor-mode))))))
+	 (if (string-equal (symbol-name major-mode) "eat-mode")
+	   (vitix/eat-minor-mode)
+	   "")))))
 #+end_src
 
 When you add a variable, be sure to add it to this list!
@@ -547,6 +548,16 @@ I'm using =eglot=, which feels much more integrated and lightweight than =lsp-mo
 
 (keymap-set global-map "C-t" vitix/prefix-keymap)
 (define-key dired-mode-map (kbd "-") #'dired-up-directory)
+#+end_src
+
+Replace =C-v= and =M-v= with scrolling half-page forward and backward.
+#+begin_src emacs-lisp
+(use-package view
+  :ensure nil
+  :config
+  (define-key global-map (kbd "C-v") #'View-scroll-half-page-forward)
+  (define-key global-map (kbd "M-v") #'View-scroll-half-page-backward)
+  )
 #+end_src
 
 ** Custom File (2)
