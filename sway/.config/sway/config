@@ -32,6 +32,7 @@ exec swayidle -w \
          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
          before-sleep 'swaylock -f -c 000000'
 exec dunst
+exec LD_LIBRARY_PATH=/usr/local/lib emacs --daemon
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
 # resumed. It will also lock your screen before your computer goes to sleep.
@@ -156,7 +157,7 @@ gaps inner 10
 # no titles
 for_window [title=".*"] border pixel 2
 for_window [app_id="firefox"] inhibit_idle fullscreen
-for_window [app_id="LibreWolf"] inhibit_idle fullscreen
+for_window [app_id="librewolf"] inhibit_idle fullscreen
 for_window [class="Brave-browser"] inhibit_idle fullscreen
 
 # assigned workspaces
@@ -166,7 +167,7 @@ assign [app_id="virt-manager"] 8
 assign [app_id="firefox"] 9
 assign [app_id="LibreWolf"] 9
 assign [app_id="org.wezfurlong.wezterm"] 10
-assign [class="Emacs"] 10
+assign [app_id="emacs"] 10
 focus_follows_mouse no
 
 client.focused $main $main $text

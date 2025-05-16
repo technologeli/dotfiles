@@ -5,9 +5,9 @@ set fish_greeting
 fish_add_path ~/.local/bin
 
 if status is-interactive
-	set -Ux EDITOR nvim
-	set -Ux MANPAGER "nvim +Man!"
-	fish_vi_key_bindings
+   	set -gx LD_LIBRARY_PATH /usr/local/lib
+	set -Ux EDITOR "emacsclient"
+	fish_default_key_bindings
 	zoxide init fish --cmd cd | source
 	fzf_key_bindings
 	starship init fish | source

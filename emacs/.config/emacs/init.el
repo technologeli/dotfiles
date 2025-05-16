@@ -1,4 +1,6 @@
-  (setq custom-file "~/.config/emacs/emacs-custom.el")
+;; -*- lexical-binding: t; -*-
+
+(setq custom-file "~/.config/emacs/emacs-custom.el")
 
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
   			 ("melpa-stable" . "https://stable.melpa.org/packages/")
@@ -145,6 +147,20 @@
     :init
     (global-undo-tree-mode))
 
+(setq auth-sources '("~/.authinfo.gpg"))
+
+(defun vitix/disable-backups () 
+  "Disable backups and autosaving for files ending in \".gpg\" or those in \"/dev\"."
+  (when (and (buffer-file-name) 
+             (or (string-match "\\.gpg\\'" (buffer-file-name))
+		 (string-match "^/dev" (buffer-file-name)))) 
+    (setq-local backup-inhibited t) 
+    (setq-local undo-tree-auto-save-history nil) 
+    (auto-save-mode -1))) 
+(add-hook 'find-file-hook #'vitix/disable-backups)
+
+(setq history-add-new-input nil)
+
 (defun meow-setup ()
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-colemak-dh)
   (meow-motion-define-key
@@ -234,7 +250,7 @@
 (use-package eat
   :bind
   ("C-c t s" . #'eat-semi-char-mode)
-  ("C-c t" . #'eat-emacs-mode))
+  ("C-c t e" . #'eat-emacs-mode))
 
   (use-package vertico
     :init

@@ -20,24 +20,53 @@ This configuration uses *Inter* and *JetBrains Mono*, which can be installed as 
   unzip JetBrainsMono-2.304.zip
   fc-cache -f -v
 #+end_src
+** Building
+Follow [[https://www.masteringemacs.org/article/speed-up-emacs-libjansson-native-elisp-compilation][this tutorial]] and [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][this tree-sitter add-on]], but make sure to use =--with-pgtk= to use Wayland.
+
+Build tree-sitter first:
+#+begin_src sh :tangle no
+git clone git@github.com:tree-sitter/tree-sitter.git
+cd tree-sitter/
+make
+sudo make install
+#+end_src
+
+You'll likely need something like this to ensure Emacs can find tree-sitter.
+#+begin_src sh :tangle no
+export LD_LIBRARY_PATH=/usr/local/lib/
+#+end_src
+
+#+begin_src sh :tangle no
+git clone https://git.savannah.gnu.org/git/emacs.git # this will take a while
+# make sure libgccjit-x-git matches gcc version
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common libgccjit0 libgccjit-12-dev libjansson4 libjansson-dev
+cd emacs
+./autogen.sh
+./configure --without-compress-install --with-native-compilation --with-json --with-mailutils --with-pgtk --with-tree-sitter
+make -j 4
+sudo make install
+#+end_src
 
 ** Setup
 Ensure that no files exist at =~/.emacs= and =~/.emacs.d/=. Within the =~/dotfiles= directory, run the following:
 
 #+begin_src sh :tangle no
-  stow -R --no-folding emacs -v
-  emacs # start emacs traditionally to ensure it installs correctly
-  systemctl --user enable emacs
-  systemctl --user start emacs
+killall emacs # stop any currently running emacs
+stow -R --no-folding emacs -v
+emacs # start emacs traditionally to ensure it installs correctly
 #+end_src
 
 * Configuration
+** Lexical binding
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
 
 ** Custom File (1)
 Customized variables via the Easy Customization Interface are saved here:
 
 #+begin_src emacs-lisp
-  (setq custom-file "~/.config/emacs/emacs-custom.el")
+(setq custom-file "~/.config/emacs/emacs-custom.el")
 #+end_src
 
 This is loaded later in the configuration, at the end.
@@ -243,6 +272,29 @@ Set the mode line for real
     (global-undo-tree-mode))
 #+end_src
 
+** Authentication
+
+#+begin_src emacs-lisp
+(setq auth-sources '("~/.authinfo.gpg"))
+#+end_src
+
+Shout out to [[https://www.reddit.com/r/emacs/comments/z12926/comment/j33zcsw/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button][this post]]!
+#+begin_src emacs-lisp
+(defun vitix/disable-backups () 
+  "Disable backups and autosaving for files ending in \".gpg\" or those in \"/dev\"."
+  (when (and (buffer-file-name) 
+             (or (string-match "\\.gpg\\'" (buffer-file-name))
+		 (string-match "^/dev" (buffer-file-name)))) 
+    (setq-local backup-inhibited t) 
+    (setq-local undo-tree-auto-save-history nil) 
+    (auto-save-mode -1))) 
+(add-hook 'find-file-hook #'vitix/disable-backups) 
+#+end_src
+
+#+begin_src emacs-lisp
+(setq history-add-new-input nil)
+#+end_src
+
 ** Meow
 ???
 
@@ -341,7 +393,7 @@ Eat doesn't have good fish integration, but it treats input much better. It's al
 (use-package eat
   :bind
   ("C-c t s" . #'eat-semi-char-mode)
-  ("C-c t" . #'eat-emacs-mode))
+  ("C-c t e" . #'eat-emacs-mode))
 #+end_src
 ** Completion
 
