@@ -48,7 +48,8 @@
   ("C-c f" . #'fontaine-set-preset))
 
 (when (getenv "ANDROID_DATA")
-  (toggle-frame-fullscreen)
+  (setq org-directory "/storage/emulated/0/tome")
+  (setq denote-directory "/storage/emulated/0/tome")
   (fontaine-set-preset 'phone))
 
 ;; run M-x nerd-icons-install-fonts after installing
