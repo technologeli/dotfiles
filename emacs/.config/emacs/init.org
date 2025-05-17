@@ -12,13 +12,13 @@ Before using this configuration, please ensure that Emacs v30.1 is installed. On
 This configuration uses *Inter* and *JetBrains Mono*, which can be installed as follows:
 
 #+begin_src sh :tangle no
-  mkdir -p ~/.local/share/fonts
-  cd ~/.local/share/fonts
-  wget https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip
-  unzip Inter-4.1.zip
-  wget https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip
-  unzip JetBrainsMono-2.304.zip
-  fc-cache -f -v
+mkdir -p ~/.local/share/fonts
+cd ~/.local/share/fonts
+wget https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip
+unzip Inter-4.1.zip
+wget https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip
+unzip JetBrainsMono-2.304.zip
+fc-cache -f -v
 #+end_src
 ** Building
 Follow [[https://www.masteringemacs.org/article/speed-up-emacs-libjansson-native-elisp-compilation][this tutorial]] and [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][this tree-sitter add-on]], but make sure to use =--with-pgtk= to use Wayland.
@@ -56,6 +56,22 @@ stow -R --no-folding emacs -v
 emacs # start emacs traditionally to ensure it installs correctly
 #+end_src
 
+** Android
+Following [[https://hadi.timachi.com/posts/emacs_GUI_on_android/Use_Emacs_in_GUI_mode_on_Android_using_Termux_and_Termux_X11/][this guide]], with some modifications
+#+begin_src sh :tangle no
+pkg install x11-repo
+pkg install termux-x11-nightly
+#+end_src
+
+Install [[https://github.com/termux/termux-x11/releases/tag/nightly][nightly Termux:X11]].
+
+Set up dotfiles as above.
+
+#+begin_src sh :tangle no
+pkg install libwebp libxi emacs-x
+termux-x11 :1 -xstartup "emacs"
+#+end_src
+
 * Configuration
 ** Lexical binding
 #+begin_src emacs-lisp
@@ -74,52 +90,57 @@ This is loaded later in the configuration, at the end.
 ** Package Management
 
 #+begin_src emacs-lisp
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-  			 ("melpa-stable" . "https://stable.melpa.org/packages/")
-			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-  			 ("org" . "https://orgmode.org/elpa/")
-  			 ("elpa" . "https://elpa.gnu.org/packages/")))
-  (package-initialize)
-  (unless package-archive-contents
-    (package-refresh-contents))
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("melpa-stable" . "https://stable.melpa.org/packages/")
+                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+			 ("org" . "https://orgmode.org/elpa/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")))
+(package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
 
-  ;; Initialize use-package
-  ;; -p means "predicate"
-  (unless (package-installed-p 'use-package)
-    (package-install 'use-package))
-  (require 'use-package)
-  ;; Install all packages specified by use-package
-  (setq use-package-always-ensure t)
+;; Initialize use-package
+;; -p means "predicate"
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+(require 'use-package)
+;; Install all packages specified by use-package
+(setq use-package-always-ensure t)
 #+end_src
 
 ** Theme
 This includes various graphical customizations, including fonts.
 
 #+begin_src emacs-lisp
-  (setq inhibit-startup-message t)
-  (setq ring-bell-function 'ignore)
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (blink-cursor-mode -1)
-  (setq-default display-line-numbers 'relative)
+(setq inhibit-startup-message t)
+(setq ring-bell-function 'ignore)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(blink-cursor-mode -1)
+(setq-default display-line-numbers 'relative)
 #+end_src
 
 *** Font Settings
 
-In the future, I may use [[https://protesilaos.com/emacs/fontaine][fontaine]] to manage font configuration. For now, I'll use this.
-
 #+begin_src emacs-lisp
-  (defun vitix/init-fonts ()
-    (setq vitix/fixed-font-height 120)
-    (setq vitix/variable-font-height 120)
-    (setq vitix/fixed-font "JetBrains Mono")
-    (setq vitix/variable-font "Inter")
-    (set-face-attribute 'default nil :font vitix/fixed-font :height vitix/fixed-font-height)
-    (set-face-attribute 'fixed-pitch nil :font vitix/fixed-font :height vitix/fixed-font-height)
-    (set-face-attribute 'variable-pitch nil :font vitix/variable-font :height vitix/variable-font-height)
-    )
-  (vitix/init-fonts)
+(use-package fontaine
+  :init
+  (setq fontaine-presets
+	'((regular)
+	  (large
+	   :default-height 200)
+	  (t
+	   :default-family "JetBrains Mono"
+	   :default-weight regular
+	   :default-height 120
+
+	   :variable-pitch-family "Inter"
+	   )))
+  (fontaine-set-preset 'regular)
+  (fontaine-mode 1)
+  :bind
+  ("C-c f" . #'fontaine-set-preset))
 #+end_src
 
 
@@ -153,7 +174,9 @@ In the future, I may use [[https://protesilaos.com/emacs/fontaine][fontaine]] to
 
 Shout out to [[https://github.com/protesilaos/spacious-padding/issues/9#issuecomment-2016613020][this GitHub comment]]
 #+begin_src emacs-lisp
-(use-package spacious-padding)
+(use-package spacious-padding
+  :config
+  (spacious-padding-mode 1))
   
 (defun spacious-padding-workaround ()
   "Workaround issues with `spacious-padding-mode' when using emacsclient."
@@ -388,12 +411,18 @@ Shout out to [[https://www.reddit.com/r/emacs/comments/z12926/comment/j33zcsw/?u
 
 ** Terminal
 
-Eat doesn't have good fish integration, but it treats input much better. It's also written in elisp, so I don't need to install =libtool-bin= or compile anything.
+Eat doesn't have the best fish integration, but it treats input much better. It's also written in elisp, so I don't need to install =libtool-bin= or compile anything.
 #+begin_src emacs-lisp
+(defun vitix/send-escape ()
+  (interactive)
+  (eat--send-input nil (kbd "ESC")))
+
 (use-package eat
   :bind
   ("C-c t s" . #'eat-semi-char-mode)
-  ("C-c t e" . #'eat-emacs-mode))
+  ("C-c t e" . #'eat-emacs-mode)
+  ("C-<escape>" . #'vitix/send-escape)
+  ("C-g" . #'vitix/send-escape))
 #+end_src
 ** Completion
 
@@ -404,22 +433,22 @@ My completion stack is as follows:
 - orderless
 
 #+begin_src emacs-lisp
-  (use-package vertico
-    :init
-    (vertico-mode 1)
-    (savehist-mode 1)
-    (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
+(use-package vertico
+  :init
+  (vertico-mode 1)
+  (savehist-mode 1)
+  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
 
-  (use-package consult)
+(use-package consult)
 
-  (use-package marginalia
-    :init
-    (marginalia-mode 1))
+(use-package marginalia
+  :init
+  (marginalia-mode 1))
 
-  (use-package orderless
-    :custom
-    (completion-styles '(orderless basic))
-    (completion-category-overrides '((file (styles basic partial-completion)))))
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 #+end_src
 
 
@@ -430,36 +459,35 @@ My completion stack is as follows:
 
 ** Magit
 #+begin_src emacs-lisp
-  (use-package magit)
+(use-package magit)
 #+end_src
 
 ** Org Mode
 #+begin_src emacs-lisp
-  (defun vitix/org-mode-setup ()
-    (variable-pitch-mode)
-    (vitix/init-fonts)
-    (visual-line-mode)
-    (org-indent-mode)
-    )
-  (use-package org
-    :hook (org-mode . vitix/org-mode-setup)
-    :config
-    (setq org-hide-emphasis-markers t)
-    (setq org-src-preserve-indentation t)
-    (setq org-return-follows-link t)
-    (setq org-startup-truncated nil)
-    (setq org-directory "~/tome")
-    :bind
-    ("C-c C-h" . #'org-fold-hide-entry)
-    ("C-c C-s" . #'org-fold-show-entry))
+(defun vitix/org-mode-setup ()
+  (variable-pitch-mode)
+  (visual-line-mode)
+  (org-indent-mode)
+  )
+(use-package org
+  :hook (org-mode . vitix/org-mode-setup)
+  :config
+  (setq org-hide-emphasis-markers t)
+  (setq org-src-preserve-indentation t)
+  (setq org-return-follows-link t)
+  (setq org-startup-truncated nil)
+  (setq org-directory "~/tome")
+  :bind
+  ("C-c h" . #'org-fold-hide-subtree)
+  ("C-c s" . #'org-fold-show-subtree))
 #+end_src
 
 This package emulates a WYSIWYG editor. More options can be found on [[https://github.com/awth13/org-appear][GitHub]].
 #+begin_src emacs-lisp
-  (use-package org-appear
-    :init
-    (add-hook 'org-mode-hook 'org-appear-mode)
-    )
+(use-package org-appear
+  :init
+  (add-hook 'org-mode-hook 'org-appear-mode)
+  )
 #+end_src
 
 Special UTF-8 headings:
@@ -578,6 +606,134 @@ Useful functions for Denote with Org mode.
 (use-package denote-org)
 #+end_src
 
+
+** Publishing
+
+A package to export an Org file into GitHub-style Markdown. Particularly, this uses the backtick codeblock syntax, which the built-in =org-md-export-to-markdown= does not do.
+
+#+begin_src emacs-lisp
+(use-package ox-gfm)
+#+end_src
+
+I wrote basically a whole package to export my files to Jekyll! Simply call =vitix/publish= and all Denote files with the =publish= tag will get published.
+
+#+begin_src emacs-lisp
+(defun vitix/publish--files (tag)
+  "Returns a list of files with the given tag."
+  (seq-filter (lambda (full-filename)
+		(string-match (concat "_" tag) full-filename))	    
+              (directory-files denote-directory t)))
+
+(defun vitix/publish--export (full-filename)
+  "Exports an Org file to GitHub Markdown and returns the full file name."
+  (with-current-buffer (find-file-noselect full-filename)
+    (org-gfm-export-to-markdown))
+  (concat
+   (file-name-directory full-filename)
+   (file-name-base full-filename)
+   ".md"))
+
+(defun vitix/publish--filename-date (filename)
+  "Returns the Jekyll filename date section of a Denote file."
+  (concat
+   (substring filename 0 4)
+   "-"
+   (substring filename 4 6)
+   "-"
+   (substring filename 6 8)))
+
+(defun vitix/publish--filename-title (filename)
+  "Returns the Jekyll filename title section of a Denote file."
+  (substring filename
+	     (+ (string-search "--" filename) 2)
+	     (string-search "__" filename)))
+
+(defun vitix/publish--filename (full-filename)
+  "Returns the Jekyll file name of a Denote file."
+  (let ((filename (file-name-nondirectory full-filename)))
+    (concat (vitix/publish--filename-date filename)
+	    "-"
+	    (vitix/publish--filename-title filename)
+	    ".md")))
+
+(defun vitix/publish--tags (filename)
+  "Returns a list of tags of a Denote file."
+  (string-split (substring filename
+			   (+ (string-search "__" filename) 2)
+			   (string-search "." filename))
+		"_"))
+
+(defun vitix/publish--org-title (full-filename)
+  "Extracts the original title from an Org file."
+  (with-temp-buffer
+    (insert-file-contents full-filename)
+    (org-mode)
+    (cadr (car (org-collect-keywords '("TITLE"))))))
+
+(defun vitix/publish--metadata (full-filename)
+  "Returns the Jekyll metadata about a Denote file."
+  (concat "---\n"
+	  "title: "
+	  (vitix/publish--org-title full-filename)
+	  "\n"
+
+	  "tags: ["
+	  (string-join
+	   (vitix/publish--tags
+	    (file-name-nondirectory full-filename))
+	   ",")
+	  "]\n"
+
+	  "---\n"))
+
+(defun vitix/publish--add-metadata (original-full-filename export-full-filename)
+  "Writes the metadata to the exported file."
+  (write-region (concat (vitix/publish--metadata original-full-filename)
+	                (vitix/load-file-as-string export-full-filename))
+		nil
+		export-full-filename))
+
+(defun vitix/load-file-as-string (full-filename)
+  "Return the contents of the file as a string."
+  (with-temp-buffer
+    (insert-file-contents full-filename)
+    (buffer-string)))
+
+(defun vitix/publish--link (full-filename)
+  "Return the Jekyll link of a Denote file."
+  (concat "/posts/" (vitix/publish--filename-title full-filename)))
+
+(defun vitix/publish--filter-links (full-filename)
+  "Replace all Denote links with Jekyll links."
+  (let* ((text (vitix/load-file-as-string full-filename))
+	 (link-index (string-search denote-directory text)))
+    ;; loop until there's no more
+    (while link-index
+      (let ((link-full-filename
+	     (substring text link-index (string-search ")" text link-index))))
+	(setq text (replace-regexp-in-string
+		    link-full-filename
+		    (vitix/publish--link link-full-filename)
+		    text)))
+      (setq link-index (string-search denote-directory text)))
+    (write-region text nil full-filename)))
+
+(defun vitix/publish (&optional tag export-directory)
+  "Publish Denote files to the export directory."
+  (interactive)
+  (unless tag
+    (setq tag "publish"))
+  (unless export-directory
+    (setq export-directory "~/projects/technologeli.github.io/_posts/"))
+  (dolist (full-filename (vitix/publish--files tag))
+    (let ((export-full-filename (concat export-directory
+					(vitix/publish--filename full-filename))))
+      (rename-file (vitix/publish--export full-filename)
+		   export-full-filename
+		   t)
+      (vitix/publish--filter-links export-full-filename)
+      (vitix/publish--add-metadata full-filename export-full-filename))))
+#+end_src
 
 ** Development
 *** LSP (Eglot)

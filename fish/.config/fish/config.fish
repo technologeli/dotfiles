@@ -29,10 +29,12 @@ if status is-interactive
 end
 set -gx JAVA_HOME "/opt/jdk-21.0.6+7/"
 set -gx VOLTA_HOME "$HOME/.volta"
+set -gx GEM_HOME "$HOME/gems"
 fish_add_path "$VOLTA_HOME/bin"
 fish_add_path /usr/local/go/bin
 fish_add_path "$HOME/go/bin"
 fish_add_path "$JAVA_HOME/bin"
+fish_add_path "$GEM_HOME/bin"
 
 # emacs
 function vterm_printf;

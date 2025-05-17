@@ -2,41 +2,48 @@
 
 (setq custom-file "~/.config/emacs/emacs-custom.el")
 
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-  			 ("melpa-stable" . "https://stable.melpa.org/packages/")
-			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-  			 ("org" . "https://orgmode.org/elpa/")
-  			 ("elpa" . "https://elpa.gnu.org/packages/")))
-  (package-initialize)
-  (unless package-archive-contents
-    (package-refresh-contents))
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("melpa-stable" . "https://stable.melpa.org/packages/")
+                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+			 ("org" . "https://orgmode.org/elpa/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")))
+(package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
 
-  ;; Initialize use-package
-  ;; -p means "predicate"
-  (unless (package-installed-p 'use-package)
-    (package-install 'use-package))
-  (require 'use-package)
-  ;; Install all packages specified by use-package
-  (setq use-package-always-ensure t)
+;; Initialize use-package
+;; -p means "predicate"
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+(require 'use-package)
+;; Install all packages specified by use-package
+(setq use-package-always-ensure t)
 
-  (setq inhibit-startup-message t)
-  (setq ring-bell-function 'ignore)
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (blink-cursor-mode -1)
-  (setq-default display-line-numbers 'relative)
+(setq inhibit-startup-message t)
+(setq ring-bell-function 'ignore)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(blink-cursor-mode -1)
+(setq-default display-line-numbers 'relative)
 
-  (defun vitix/init-fonts ()
-    (setq vitix/fixed-font-height 120)
-    (setq vitix/variable-font-height 120)
-    (setq vitix/fixed-font "JetBrains Mono")
-    (setq vitix/variable-font "Inter")
-    (set-face-attribute 'default nil :font vitix/fixed-font :height vitix/fixed-font-height)
-    (set-face-attribute 'fixed-pitch nil :font vitix/fixed-font :height vitix/fixed-font-height)
-    (set-face-attribute 'variable-pitch nil :font vitix/variable-font :height vitix/variable-font-height)
-    )
-  (vitix/init-fonts)
+(use-package fontaine
+  :init
+  (setq fontaine-presets
+	'((regular)
+	  (large
+	   :default-height 200)
+	  (t
+	   :default-family "JetBrains Mono"
+	   :default-weight regular
+	   :default-height 120
+
+	   :variable-pitch-family "Inter"
+	   )))
+  (fontaine-set-preset 'regular)
+  (fontaine-mode 1)
+  :bind
+  ("C-c f" . #'fontaine-set-preset))
 
 ;; run M-x nerd-icons-install-fonts after installing
 (use-package nerd-icons)
@@ -62,7 +69,9 @@
   :config
   (ef-themes-load-theme 'ef-dream))
 
-(use-package spacious-padding)
+(use-package spacious-padding
+  :config
+  (spacious-padding-mode 1))
   
 (defun spacious-padding-workaround ()
   "Workaround issues with `spacious-padding-mode' when using emacsclient."
@@ -247,10 +256,16 @@
   (meow-setup)
   (meow-global-mode 1))
 
+(defun vitix/send-escape ()
+  (interactive)
+  (eat--send-input nil (kbd "ESC")))
+
 (use-package eat
   :bind
   ("C-c t s" . #'eat-semi-char-mode)
-  ("C-c t e" . #'eat-emacs-mode))
+  ("C-c t e" . #'eat-emacs-mode)
+  ("C-<escape>" . #'vitix/send-escape)
+  ("C-g" . #'vitix/send-escape))
 
   (use-package vertico
     :init
@@ -275,7 +290,7 @@
 
   (defun vitix/org-mode-setup ()
     (variable-pitch-mode)
-    (vitix/init-fonts)
+    ;; (vitix/init-fonts)
     (visual-line-mode)
     (org-indent-mode)
     )
@@ -288,8 +303,8 @@
     (setq org-startup-truncated nil)
     (setq org-directory "~/tome")
     :bind
-    ("C-c C-h" . #'org-fold-hide-entry)
-    ("C-c C-s" . #'org-fold-show-entry))
+    ("C-c h" . #'org-fold-hide-subtree)
+    ("C-c s" . #'org-fold-show-subtree))
 
   (use-package org-appear
     :init
@@ -379,6 +394,124 @@
   )
 
 (use-package denote-org)
+
+(use-package ox-gfm)
+
+(defun vitix/publish--files (tag)
+  "Returns a list of files with the given tag."
+  (seq-filter (lambda (full-filename)
+		(string-match (concat "_" tag) full-filename))	    
+              (directory-files denote-directory t)))
+
+(defun vitix/publish--export (full-filename)
+  "Exports an Org file to GitHub Markdown and returns the full file name."
+  (with-current-buffer (find-file-noselect full-filename)
+    (org-gfm-export-to-markdown))
+  (concat
+   (file-name-directory full-filename)
+   (file-name-base full-filename)
+   ".md"))
+
+(defun vitix/publish--filename-date (filename)
+  "Returns the Jekyll filename date section of a Denote file."
+  (concat
+   (substring filename 0 4)
+   "-"
+   (substring filename 4 6)
+   "-"
+   (substring filename 6 8)))
+
+(defun vitix/publish--filename-title (filename)
+  "Returns the Jekyll filename title section of a Denote file."
+  (substring filename
+	     (+ (string-search "--" filename) 2)
+	     (string-search "__" filename)))
+
+(defun vitix/publish--filename (full-filename)
+  "Returns the Jekyll file name of a Denote file."
+  (let ((filename (file-name-nondirectory full-filename)))
+    (concat (vitix/publish--filename-date filename)
+	    "-"
+	    (vitix/publish--filename-title filename)
+	    ".md")))
+
+(defun vitix/publish--tags (filename)
+  "Returns a list of tags of a Denote file."
+  (string-split (substring filename
+			   (+ (string-search "__" filename) 2)
+			   (string-search "." filename))
+		"_"))
+
+(defun vitix/publish--org-title (full-filename)
+  "Extracts the original title from an Org file."
+  (with-temp-buffer
+    (insert-file-contents full-filename)
+    (org-mode)
+    (cadr (car (org-collect-keywords '("TITLE"))))))
+
+(defun vitix/publish--metadata (full-filename)
+  "Returns the Jekyll metadata about a Denote file."
+  (concat "---\n"
+	  "title: "
+	  (vitix/publish--org-title full-filename)
+	  "\n"
+
+	  "tags: ["
+	  (string-join
+	   (vitix/publish--tags
+	    (file-name-nondirectory full-filename))
+	   ",")
+	  "]\n"
+
+	  "---\n"))
+
+(defun vitix/publish--add-metadata (original-full-filename export-full-filename)
+  "Writes the metadata to the exported file."
+  (write-region (concat (vitix/publish--metadata original-full-filename)
+	                (vitix/load-file-as-string export-full-filename))
+		nil
+		export-full-filename))
+
+(defun vitix/load-file-as-string (full-filename)
+  "Return the contents of the file as a string."
+  (with-temp-buffer
+    (insert-file-contents full-filename)
+    (buffer-string)))
+
+(defun vitix/publish--link (full-filename)
+  "Return the Jekyll link of a Denote file."
+  (concat "/posts/" (vitix/publish--filename-title full-filename)))
+
+(defun vitix/publish--filter-links (full-filename)
+  "Replace all Denote links with Jekyll links."
+  (let* ((text (vitix/load-file-as-string full-filename))
+	 (link-index (string-search denote-directory text)))
+    ;; loop until there's no more
+    (while link-index
+      (let ((link-full-filename
+	     (substring text link-index (string-search ")" text link-index))))
+	(setq text (replace-regexp-in-string
+		    link-full-filename
+		    (vitix/publish--link link-full-filename)
+		    text)))
+      (setq link-index (string-search denote-directory text)))
+    (write-region text nil full-filename)))
+
+(defun vitix/publish (&optional tag export-directory)
+  "Publish Denote files to the export directory."
+  (interactive)
+  (unless tag
+    (setq tag "publish"))
+  (unless export-directory
+    (setq export-directory "~/projects/technologeli.github.io/_posts/"))
+  (dolist (full-filename (vitix/publish--files tag))
+    (let ((export-full-filename (concat export-directory
+					(vitix/publish--filename full-filename))))
+      (rename-file (vitix/publish--export full-filename)
+		   export-full-filename
+		   t)
+      (vitix/publish--filter-links export-full-filename)
+      (vitix/publish--add-metadata full-filename export-full-filename))))
 
 (add-to-list 'exec-path "/home/eli/.volta/bin")
 (add-to-list 'exec-path "/home/eli/.local/bin")
