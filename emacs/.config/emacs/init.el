@@ -32,7 +32,9 @@
   (setq fontaine-presets
 	'((regular)
 	  (large
-	   :default-height 200)
+	   :default-height 150)
+	  (phone
+	   :default-height 270)
 	  (t
 	   :default-family "JetBrains Mono"
 	   :default-weight regular
@@ -44,6 +46,10 @@
   (fontaine-mode 1)
   :bind
   ("C-c f" . #'fontaine-set-preset))
+
+(when (getenv "ANDROID_DATA")
+  (toggle-frame-fullscreen)
+  (fontaine-set-preset 'phone))
 
 ;; run M-x nerd-icons-install-fonts after installing
 (use-package nerd-icons)
@@ -267,49 +273,48 @@
   ("C-<escape>" . #'vitix/send-escape)
   ("C-g" . #'vitix/send-escape))
 
-  (use-package vertico
-    :init
-    (vertico-mode 1)
-    (savehist-mode 1)
-    (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
+(use-package vertico
+  :init
+  (vertico-mode 1)
+  (savehist-mode 1)
+  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
 
-  (use-package consult)
+(use-package consult)
 
-  (use-package marginalia
-    :init
-    (marginalia-mode 1))
+(use-package marginalia
+  :init
+  (marginalia-mode 1))
 
-  (use-package orderless
-    :custom
-    (completion-styles '(orderless basic))
-    (completion-category-overrides '((file (styles basic partial-completion)))))
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 
 (add-hook 'dired-mode-hook #'dired-hide-details-mode)
 
-  (use-package magit)
+(use-package magit)
 
-  (defun vitix/org-mode-setup ()
-    (variable-pitch-mode)
-    ;; (vitix/init-fonts)
-    (visual-line-mode)
-    (org-indent-mode)
-    )
-  (use-package org
-    :hook (org-mode . vitix/org-mode-setup)
-    :config
-    (setq org-hide-emphasis-markers t)
-    (setq org-src-preserve-indentation t)
-    (setq org-return-follows-link t)
-    (setq org-startup-truncated nil)
-    (setq org-directory "~/tome")
-    :bind
-    ("C-c h" . #'org-fold-hide-subtree)
-    ("C-c s" . #'org-fold-show-subtree))
+(defun vitix/org-mode-setup ()
+  (variable-pitch-mode)
+  (visual-line-mode)
+  (org-indent-mode)
+  )
+(use-package org
+  :hook (org-mode . vitix/org-mode-setup)
+  :config
+  (setq org-hide-emphasis-markers t)
+  (setq org-src-preserve-indentation t)
+  (setq org-return-follows-link t)
+  (setq org-startup-truncated nil)
+  (setq org-directory "~/tome")
+  :bind
+  ("C-c h" . #'org-fold-hide-subtree)
+  ("C-c s" . #'org-fold-show-subtree))
 
-  (use-package org-appear
-    :init
-    (add-hook 'org-mode-hook 'org-appear-mode)
-    )
+(use-package org-appear
+  :init
+  (add-hook 'org-mode-hook 'org-appear-mode)
+  )
 
 (use-package org-bullets
   :after org
