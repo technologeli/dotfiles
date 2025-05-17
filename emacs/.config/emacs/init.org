@@ -154,6 +154,8 @@ This includes various graphical customizations, including fonts.
 For Android, automatically set the font settings. You will need to run =toggle-frame-fullscreen= manually once in landscape mode.
 #+begin_src emacs-lisp
 (when (getenv "ANDROID_DATA")
+  (setq org-directory "/storage/emulated/0/tome")
+  (setq denote-directory "/storage/emulated/0/tome")
   (fontaine-set-preset 'phone))
 #+end_src
 
