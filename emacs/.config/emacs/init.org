@@ -68,7 +68,13 @@ Install [[https://github.com/termux/termux-x11/releases/tag/nightly][nightly Ter
 Set up dotfiles as above.
 
 #+begin_src sh :tangle no
-pkg install libwebp libxi emacs-x
+pkg install libwebp libxi fontconfig-utils
+#+end_src
+
+Set up fonts as above.
+
+#+begin_src sh :tangle no
+pkg install emacs-x
 termux-x11 :1 -xstartup "emacs"
 #+end_src
 
@@ -145,10 +151,9 @@ This includes various graphical customizations, including fonts.
   ("C-c f" . #'fontaine-set-preset))
 #+end_src
 
-For Android, automatically set some settings
+For Android, automatically set the font settings. You will need to run =toggle-frame-fullscreen= manually once in landscape mode.
 #+begin_src emacs-lisp
 (when (getenv "ANDROID_DATA")
-  (toggle-frame-fullscreen)
   (fontaine-set-preset 'phone))
 #+end_src
 
