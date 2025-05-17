@@ -47,11 +47,6 @@
   :bind
   ("C-c f" . #'fontaine-set-preset))
 
-(when (getenv "ANDROID_DATA")
-  (setq org-directory "/storage/emulated/0/tome")
-  (setq denote-directory "/storage/emulated/0/tome")
-  (fontaine-set-preset 'phone))
-
 ;; run M-x nerd-icons-install-fonts after installing
 (use-package nerd-icons)
 (use-package nerd-icons-dired
@@ -579,5 +574,10 @@
   (define-key global-map (kbd "C-v") #'View-scroll-half-page-forward)
   (define-key global-map (kbd "M-v") #'View-scroll-half-page-backward)
   )
+
+(when (getenv "ANDROID_DATA")
+  (setq org-directory "/storage/emulated/0/tome")
+  (setq denote-directory "/storage/emulated/0/tome")
+  (fontaine-set-preset 'phone))
 
 (load custom-file)

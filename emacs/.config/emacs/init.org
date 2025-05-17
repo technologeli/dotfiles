@@ -151,13 +151,6 @@ This includes various graphical customizations, including fonts.
   ("C-c f" . #'fontaine-set-preset))
 #+end_src
 
-For Android, automatically set the font settings. You will need to run =toggle-frame-fullscreen= manually once in landscape mode.
-#+begin_src emacs-lisp
-(when (getenv "ANDROID_DATA")
-  (setq org-directory "/storage/emulated/0/tome")
-  (setq denote-directory "/storage/emulated/0/tome")
-  (fontaine-set-preset 'phone))
-#+end_src
 
 *** Theme Packages
 
@@ -842,6 +835,15 @@ Replace =C-v= and =M-v= with scrolling half-page forward and backward.
   (define-key global-map (kbd "C-v") #'View-scroll-half-page-forward)
   (define-key global-map (kbd "M-v") #'View-scroll-half-page-backward)
   )
+#+end_src
+
+** Android config
+For Android, automatically set some settings. You will need to run =toggle-frame-fullscreen= manually once in landscape mode.
+#+begin_src emacs-lisp
+(when (getenv "ANDROID_DATA")
+  (setq org-directory "/storage/emulated/0/tome")
+  (setq denote-directory "/storage/emulated/0/tome")
+  (fontaine-set-preset 'phone))
 #+end_src
 
 ** Custom File (2)
