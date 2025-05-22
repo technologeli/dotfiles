@@ -165,7 +165,7 @@ assign [class="obsidian"] 6
 assign [app_id="libreoffice*"] 7
 assign [app_id="virt-manager"] 8
 assign [app_id="firefox"] 9
-assign [app_id="LibreWolf"] 9
+assign [app_id="librewolf"] 9
 assign [app_id="org.wezfurlong.wezterm"] 10
 assign [app_id="emacs"] 10
 focus_follows_mouse no
