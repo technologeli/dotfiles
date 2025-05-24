@@ -2,22 +2,24 @@
 
 (setq custom-file "~/.config/emacs/emacs-custom.el")
 
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("melpa-stable" . "https://stable.melpa.org/packages/")
-                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-			 ("org" . "https://orgmode.org/elpa/")
-			 ("elpa" . "https://elpa.gnu.org/packages/")))
-(package-initialize)
-(unless package-archive-contents
-  (package-refresh-contents))
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-;; Initialize use-package
-;; -p means "predicate"
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
-(require 'use-package)
-;; Install all packages specified by use-package
-(setq use-package-always-ensure t)
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
 
 (setq inhibit-startup-message t)
 (setq ring-bell-function 'ignore)
@@ -258,12 +260,30 @@
   (meow-setup)
   (meow-global-mode 1))
 
+(use-package ace-window
+  :bind
+  ("M-o" . #'ace-window))
+
 (defun vitix/send-escape ()
   (interactive)
   (eat--send-input nil (kbd "ESC")))
 
 (use-package eat
+  :init
+  ;; make sure to make integration scripts
+  ;; executable with chmod
+  (setq eat-term-shell-integration-directory (expand-file-name "~/.config/emacs/straight/repos/eat/integration"))
+  (setq eat-term-name "xterm-256color")
+  :config
+  (customize-set-variable ;; has :set code
+       'eat-semi-char-non-bound-keys
+       (append
+        (list (vector meta-prefix-char ?o) (vector (aref (kbd "C-t") 0)))
+        eat-semi-char-non-bound-keys))
+  
   :bind
+  ("C-c t t" . #'eat)
+  ("C-c t o" . #'eat-other-window)
   ("C-c t s" . #'eat-semi-char-mode)
   ("C-c t e" . #'eat-emacs-mode)
   ("C-<escape>" . #'vitix/send-escape)
@@ -296,6 +316,7 @@
   (org-indent-mode)
   )
 (use-package org
+  :straight (:type built-in)
   :hook (org-mode . vitix/org-mode-setup)
   :config
   (setq org-hide-emphasis-markers t)
@@ -324,7 +345,7 @@
 				     ("t" . "src sh :tangle no")))
 
 (use-package org-capture
-  :ensure nil ; org-capture comes with emacs, just use this to configure it
+  :straight (:type built-in)
   :config
   (setq org-capture-templates
         '(("l" "Log" entry
@@ -356,7 +377,7 @@
 		    :foreground (ef-themes-get-color-value 'bg-dim))
 
 (use-package org-agenda
-  :ensure nil
+  :straight (:type built-in)
   :config
   (setq org-agenda-files (list org-directory))
   :bind
@@ -518,7 +539,7 @@
 (add-to-list 'exec-path "/home/eli/.local/bin")
 
 (use-package eglot
-  :ensure nil
+  :straight (:type built-in)
   :config
   (global-eldoc-mode t)
   :bind
@@ -546,6 +567,9 @@
   (add-hook 'completion-at-point-functions #'cape-elisp-block)
   )
 
+(use-package nix-mode
+  :mode "\\.nix\\'")
+
 (which-key-mode 1)
 (defvar-keymap vitix/harpoon-keymap
   :doc "Harpoon, but its actually bookmarks"
@@ -557,7 +581,6 @@
 (defvar-keymap vitix/prefix-keymap
   :doc "My custom keymap!"
   "b" #'consult-buffer
-  "t" #'eat
   "-" #'dired-jump
   "S-t" #'ef-themes-toggle
   "e" #'eglot
@@ -565,11 +588,10 @@
   "h" vitix/harpoon-keymap)
 
 (keymap-set global-map "C-t" vitix/prefix-keymap)
-(global-set-key (kbd "C-o") #'other-window)
 (define-key dired-mode-map (kbd "-") #'dired-up-directory)
 
 (use-package view
-  :ensure nil
+  :straight (:type built-in)
   :config
   (define-key global-map (kbd "C-v") #'View-scroll-half-page-forward)
   (define-key global-map (kbd "M-v") #'View-scroll-half-page-backward)

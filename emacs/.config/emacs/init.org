@@ -94,8 +94,28 @@ Customized variables via the Easy Customization Interface are saved here:
 This is loaded later in the configuration, at the end.
 
 ** Package Management
-
 #+begin_src emacs-lisp
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
 			 ("melpa-stable" . "https://stable.melpa.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
@@ -110,8 +130,6 @@ This is loaded later in the configuration, at the end.
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 (require 'use-package)
-;; Install all packages specified by use-package
-(setq use-package-always-ensure t)
 #+end_src
 
 ** Theme
@@ -417,16 +435,40 @@ Shout out to [[https://www.reddit.com/r/emacs/comments/z12926/comment/j33zcsw/?u
   (meow-global-mode 1))
 #+end_src
 
+** Window Navigation
+#+begin_src emacs-lisp
+(use-package ace-window
+  :bind
+  ("M-o" . #'ace-window))
+#+end_src
+
+
 ** Terminal
 
 Eat doesn't have the best fish integration, but it treats input much better. It's also written in elisp, so I don't need to install =libtool-bin= or compile anything.
+
+Shout out to [[https://www.reddit.com/r/emacs/comments/1cowif8/comment/lueg2an/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button][this post]] for figuring out how to set the ignored keys!
 #+begin_src emacs-lisp
 (defun vitix/send-escape ()
   (interactive)
   (eat--send-input nil (kbd "ESC")))
 
 (use-package eat
+  :init
+  ;; make sure to make integration scripts
+  ;; executable with chmod
+  (setq eat-term-shell-integration-directory (expand-file-name "~/.config/emacs/straight/repos/eat/integration"))
+  (setq eat-term-name "xterm-256color")
+  :config
+  (customize-set-variable ;; has :set code
+       'eat-semi-char-non-bound-keys
+       (append
+        (list (vector meta-prefix-char ?o) (vector (aref (kbd "C-t") 0)))
+        eat-semi-char-non-bound-keys))
+  
   :bind
+  ("C-c t t" . #'eat)
+  ("C-c t o" . #'eat-other-window)
   ("C-c t s" . #'eat-semi-char-mode)
   ("C-c t e" . #'eat-emacs-mode)
   ("C-<escape>" . #'vitix/send-escape)
@@ -465,6 +507,7 @@ My completion stack is as follows:
 (add-hook 'dired-mode-hook #'dired-hide-details-mode)
 #+end_src
 
+
 ** Magit
 #+begin_src emacs-lisp
 (use-package magit)
@@ -478,6 +521,7 @@ My completion stack is as follows:
   (org-indent-mode)
   )
 (use-package org
+  :straight (:type built-in)
   :hook (org-mode . vitix/org-mode-setup)
   :config
   (setq org-hide-emphasis-markers t)
@@ -520,7 +564,7 @@ Using =C-c C-,= I can insert code blocks with the following values:
 
 #+begin_src emacs-lisp
 (use-package org-capture
-  :ensure nil ; org-capture comes with emacs, just use this to configure it
+  :straight (:type built-in)
   :config
   (setq org-capture-templates
         '(("l" "Log" entry
@@ -558,7 +602,7 @@ In the future, I'd like to make a more in-depth agenda config.
 		    :foreground (ef-themes-get-color-value 'bg-dim))
 
 (use-package org-agenda
-  :ensure nil
+  :straight (:type built-in)
   :config
   (setq org-agenda-files (list org-directory))
   :bind
@@ -666,10 +710,11 @@ I wrote basically a whole package to export my files to Jekyll! Simply call =vit
 
 (defun vitix/publish--tags (filename)
   "Returns a list of tags of a Denote file."
-  (string-split (substring filename
-			   (+ (string-search "__" filename) 2)
-			   (string-search "." filename))
-		"_"))
+  (remove "publish"
+	  (string-split (substring filename
+				   (+ (string-search "__" filename) 2)
+			           (string-search "." filename))
+			"_")))
 
 (defun vitix/publish--org-title (full-filename)
   "Extracts the original title from an Org file."
@@ -732,7 +777,7 @@ I wrote basically a whole package to export my files to Jekyll! Simply call =vit
   (unless tag
     (setq tag "publish"))
   (unless export-directory
-    (setq export-directory "~/projects/technologeli.github.io/_posts/"))
+    (setq export-directory "~/git/technologeli.github.io/_posts/"))
   (dolist (full-filename (vitix/publish--files tag))
     (let ((export-full-filename (concat export-directory
 					(vitix/publish--filename full-filename))))
@@ -766,7 +811,7 @@ This only works after loading SSH.
 I'm using =eglot=, which feels much more integrated and lightweight than =lsp-mode=.
 #+begin_src emacs-lisp
 (use-package eglot
-  :ensure nil
+  :straight (:type built-in)
   :config
   (global-eldoc-mode t)
   :bind
@@ -801,6 +846,13 @@ I'm using =eglot=, which feels much more integrated and lightweight than =lsp-mo
   )
 #+end_src
 
+** Custom Modes
+*** Nix
+#+begin_src emacs-lisp
+(use-package nix-mode
+  :mode "\\.nix\\'")
+#+end_src
+
 ** Keybinds / Keymaps
 
 #+begin_src emacs-lisp
@@ -815,7 +867,6 @@ I'm using =eglot=, which feels much more integrated and lightweight than =lsp-mo
 (defvar-keymap vitix/prefix-keymap
   :doc "My custom keymap!"
   "b" #'consult-buffer
-  "t" #'eat
   "-" #'dired-jump
   "S-t" #'ef-themes-toggle
   "e" #'eglot
@@ -823,14 +874,13 @@ I'm using =eglot=, which feels much more integrated and lightweight than =lsp-mo
   "h" vitix/harpoon-keymap)
 
 (keymap-set global-map "C-t" vitix/prefix-keymap)
-(global-set-key (kbd "C-o") #'other-window)
 (define-key dired-mode-map (kbd "-") #'dired-up-directory)
 #+end_src
 
 Replace =C-v= and =M-v= with scrolling half-page forward and backward.
 #+begin_src emacs-lisp
 (use-package view
-  :ensure nil
+  :straight (:type built-in)
   :config
   (define-key global-map (kbd "C-v") #'View-scroll-half-page-forward)
   (define-key global-map (kbd "M-v") #'View-scroll-half-page-backward)
