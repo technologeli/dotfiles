@@ -326,7 +326,8 @@
   (setq org-directory "~/tome")
   :bind
   ("C-c h" . #'org-fold-hide-subtree)
-  ("C-c s" . #'org-fold-show-subtree))
+  ("C-c s" . #'org-fold-show-subtree)
+  ("C-M-<return>" . #'org-insert-subheading))
 
 (use-package org-appear
   :init
@@ -459,10 +460,11 @@
 
 (defun vitix/publish--tags (filename)
   "Returns a list of tags of a Denote file."
-  (string-split (substring filename
-			   (+ (string-search "__" filename) 2)
-			   (string-search "." filename))
-		"_"))
+  (remove "publish"
+	  (string-split (substring filename
+				   (+ (string-search "__" filename) 2)
+			           (string-search "." filename))
+			"_")))
 
 (defun vitix/publish--org-title (full-filename)
   "Extracts the original title from an Org file."
@@ -525,7 +527,7 @@
   (unless tag
     (setq tag "publish"))
   (unless export-directory
-    (setq export-directory "~/projects/technologeli.github.io/_posts/"))
+    (setq export-directory "~/git/technologeli.github.io/_posts/"))
   (dolist (full-filename (vitix/publish--files tag))
     (let ((export-full-filename (concat export-directory
 					(vitix/publish--filename full-filename))))
@@ -569,6 +571,9 @@
 
 (use-package nix-mode
   :mode "\\.nix\\'")
+
+(use-package lua-mode
+  :mode "\\.lua\\'")
 
 (which-key-mode 1)
 (defvar-keymap vitix/harpoon-keymap

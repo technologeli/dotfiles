@@ -531,7 +531,8 @@ My completion stack is as follows:
   (setq org-directory "~/tome")
   :bind
   ("C-c h" . #'org-fold-hide-subtree)
-  ("C-c s" . #'org-fold-show-subtree))
+  ("C-c s" . #'org-fold-show-subtree)
+  ("C-M-<return>" . #'org-insert-subheading))
 #+end_src
 
 This package emulates a WYSIWYG editor. More options can be found on [[https://github.com/awth13/org-appear][GitHub]].
@@ -852,7 +853,11 @@ I'm using =eglot=, which feels much more integrated and lightweight than =lsp-mo
 (use-package nix-mode
   :mode "\\.nix\\'")
 #+end_src
-
+*** Lua
+#+begin_src emacs-lisp
+(use-package lua-mode
+  :mode "\\.lua\\'")
+#+end_src
 ** Keybinds / Keymaps
 
 #+begin_src emacs-lisp
