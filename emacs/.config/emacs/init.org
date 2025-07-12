@@ -310,6 +310,18 @@ Set the mode line for real
    ))
 #+end_src
 
+*** Zen Mode
+Typing on the left hurts my neck.
+
+#+begin_src emacs-lisp
+(use-package darkroom
+  :config
+  (setq darkroom-margins 0.25)
+  (setq darkroom-text-scale-increase 0)
+  :bind
+  ("C-M-z" . darkroom-tentative-mode))
+#+end_src
+
 ** Undo Tree
 
 #+begin_src emacs-lisp

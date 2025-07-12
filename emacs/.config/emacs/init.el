@@ -153,6 +153,13 @@
    "  "
    ))
 
+(use-package darkroom
+  :config
+  (setq darkroom-margins 0.25)
+  (setq darkroom-text-scale-increase 0)
+  :bind
+  ("C-M-z" . darkroom-tentative-mode))
+
   (setq make-backup-files nil)
   (use-package undo-tree
     :config
