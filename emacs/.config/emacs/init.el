@@ -582,6 +582,9 @@
 (use-package lua-mode
   :mode "\\.lua\\'")
 
+(use-package pdf-tools
+  :mode "\\.pdf\\'")
+
 (which-key-mode 1)
 (defvar-keymap vitix/harpoon-keymap
   :doc "Harpoon, but its actually bookmarks"

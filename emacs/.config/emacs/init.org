@@ -870,6 +870,11 @@ I'm using =eglot=, which feels much more integrated and lightweight than =lsp-mo
 (use-package lua-mode
   :mode "\\.lua\\'")
 #+end_src
+*** PDF
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :mode "\\.pdf\\'")
+#+end_src
 ** Keybinds / Keymaps
 
 #+begin_src emacs-lisp
