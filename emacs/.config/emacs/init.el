@@ -155,8 +155,8 @@
 
 (use-package darkroom
   :config
-  (setq darkroom-margins 0.25)
-  (setq darkroom-text-scale-increase 0)
+  (setq-default darkroom-margins 0.25)
+  (setq-default darkroom-text-scale-increase 0)
   :bind
   ("C-M-z" . darkroom-tentative-mode))
 
@@ -287,8 +287,9 @@
        (append
         (list (vector meta-prefix-char ?o) (vector (aref (kbd "C-t") 0)))
         eat-semi-char-non-bound-keys))
-  
+  :hook (eat-mode . (lambda () (setq display-line-numbers nil)))
   :bind
+  ("C-x p e" . #'eat-project)
   ("C-c t t" . #'eat)
   ("C-c t o" . #'eat-other-window)
   ("C-c t s" . #'eat-semi-char-mode)
@@ -350,7 +351,7 @@
 (setq org-structure-template-alist '(("s" . "src")
                                      ("e" . "src emacs-lisp")
                                      ("p" . "src python")
-				     ("t" . "src sh :tangle no")))
+				     ("t" . "src sh")))
 
 (use-package org-capture
   :straight (:type built-in)
@@ -576,6 +577,16 @@
   (add-hook 'completion-at-point-functions #'cape-elisp-block)
   )
 
+(add-hook 'c-mode-hook
+	  (lambda ()
+	    (setq tab-width 4)
+	    (setq c-basic-offset 4)))
+
+(add-hook 'c++-mode-hook
+	  (lambda ()
+	    (setq tab-width 4)
+	    (setq c-basic-offset 4)))
+
 (use-package nix-mode
   :mode "\\.nix\\'")
 
@@ -583,7 +594,14 @@
   :mode "\\.lua\\'")
 
 (use-package pdf-tools
+  :hook (pdf-view-mode . (lambda () (setq display-line-numbers nil)))
   :mode "\\.pdf\\'")
+
+(use-package kotlin-mode
+  :mode "\\.kt\\'")
+
+(use-package rust-mode
+  :mode "\\.rs\\'")
 
 (which-key-mode 1)
 (defvar-keymap vitix/harpoon-keymap

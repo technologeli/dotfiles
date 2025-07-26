@@ -316,8 +316,8 @@ Typing on the left hurts my neck.
 #+begin_src emacs-lisp
 (use-package darkroom
   :config
-  (setq darkroom-margins 0.25)
-  (setq darkroom-text-scale-increase 0)
+  (setq-default darkroom-margins 0.25)
+  (setq-default darkroom-text-scale-increase 0)
   :bind
   ("C-M-z" . darkroom-tentative-mode))
 #+end_src
@@ -477,8 +477,9 @@ Shout out to [[https://www.reddit.com/r/emacs/comments/1cowif8/comment/lueg2an/?
        (append
         (list (vector meta-prefix-char ?o) (vector (aref (kbd "C-t") 0)))
         eat-semi-char-non-bound-keys))
-  
+  :hook (eat-mode . (lambda () (setq display-line-numbers nil)))
   :bind
+  ("C-x p e" . #'eat-project)
   ("C-c t t" . #'eat)
   ("C-c t o" . #'eat-other-window)
   ("C-c t s" . #'eat-semi-char-mode)
@@ -569,7 +570,7 @@ Using =C-c C-,= I can insert code blocks with the following values:
 (setq org-structure-template-alist '(("s" . "src")
                                      ("e" . "src emacs-lisp")
                                      ("p" . "src python")
-				     ("t" . "src sh :tangle no")))
+				     ("t" . "src sh")))
 #+end_src
 
 *** Org Capture
@@ -860,6 +861,22 @@ I'm using =eglot=, which feels much more integrated and lightweight than =lsp-mo
 #+end_src
 
 ** Custom Modes
+*** C
+#+begin_src emacs-lisp
+(add-hook 'c-mode-hook
+	  (lambda ()
+	    (setq tab-width 4)
+	    (setq c-basic-offset 4)))
+#+end_src
+
+*** C++
+#+begin_src emacs-lisp
+(add-hook 'c++-mode-hook
+	  (lambda ()
+	    (setq tab-width 4)
+	    (setq c-basic-offset 4)))
+#+end_src
+
 *** Nix
 #+begin_src emacs-lisp
 (use-package nix-mode
@@ -873,7 +890,18 @@ I'm using =eglot=, which feels much more integrated and lightweight than =lsp-mo
 *** PDF
 #+begin_src emacs-lisp
 (use-package pdf-tools
+  :hook (pdf-view-mode . (lambda () (setq display-line-numbers nil)))
   :mode "\\.pdf\\'")
+#+end_src
+*** Kotlin
+#+begin_src emacs-lisp
+(use-package kotlin-mode
+  :mode "\\.kt\\'")
+#+end_src
+*** Rust
+#+begin_src emacs-lisp
+(use-package rust-mode
+  :mode "\\.rs\\'")
 #+end_src
 ** Keybinds / Keymaps
 
