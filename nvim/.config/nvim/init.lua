@@ -1,4 +1,7 @@
 require("config.lazy")
+package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?/init.lua;"
+package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?.lua;"
+vim.opt.conceallevel = 2
 
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -12,7 +15,12 @@ vim.opt.swapfile = false
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
-vim.opt.guicursor = ""
+vim.opt.guicursor = {
+	"n-v-c:block-blinkon0",
+	"i-ci-ve:ver25-blinkon0",
+	"r-cr:hor20-blinkon0",
+	"o:hor50-blinkon0",
+}
 vim.opt.signcolumn = "yes"
 vim.opt.colorcolumn = "80"
 vim.opt.scrolloff = 10 -- minimum lines above and below cursor
@@ -35,6 +43,7 @@ vim.opt.splitbelow = true
 -- gri is implementations
 -- gd is definition
 
+vim.keymap.set("n", "<leader>b", "<cmd>b#<CR>", { desc = "Previous [B]uffer" })
 vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Source current file" })
 vim.keymap.set("n", "<leader>x", ":.lua<CR>", { desc = "Source current line" })
 vim.keymap.set("v", "<leader>x", ":lua<CR>", { desc = "Source current lines" })
@@ -98,7 +107,52 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
 
 vim.keymap.set({'n','v'}, '<leader>nn', ":Denote note<cr>",      { desc = "New note"         })
-vim.keymap.set({'n','v'}, '<leader>nt', ":Denote title<cr>",     { desc = "Change title"     })
+vim.keymap.set({'n','v'}, '<leader>nr', ":Denote title<cr>",     { desc = "Rename note"     })
 vim.keymap.set({'n','v'}, '<leader>nk', ":Denote keywords<cr>",  { desc = "Change keywords"  })
 vim.keymap.set({'n','v'}, '<leader>nz', ":Denote signature<cr>", { desc = "Change signature" })
 vim.keymap.set({'n','v'}, '<leader>ne', ":Denote extension<cr>", { desc = "Change extension" })
+
+local uv = vim.loop
+
+local function is_created_today(ctime_sec)
+	local file_date = os.date("*t", ctime_sec)
+	local today = os.date("*t")
+
+	return file_date.year == today.year
+	and file_date.month == today.month
+	and file_date.day == today.day
+end
+
+local function today(dir)
+	local files = {}
+	local handle = uv.fs_scandir(dir)
+	if not handle then
+		print("Directory not found: " .. dir)
+		return
+	end
+
+	while true do
+		local name, type = uv.fs_scandir_next(handle)
+		if not name then break end
+		if type == 'file' and name:find("_journal") then
+			local filepath = dir .. "/" .. name
+			local stat = uv.fs_stat(filepath)
+			if stat and is_created_today(stat.ctime.sec) then
+				table.insert(files, { path = filepath, ctime = stat.ctime.sec })
+			end
+		end
+	end
+
+	if #files == 0 then
+		print("No journal entry for today.")
+		return
+	end
+
+	table.sort(files, function(a, b)
+		return a.ctime > b.ctime
+	end)
+
+	local latest_file = files[1].path
+	vim.cmd("edit " .. vim.fn.fnameescape(latest_file))
+end
+vim.keymap.set({'n','v'}, '<leader>nt', function() today("/home/eli/notes") end, { desc = "Go to today's note" })

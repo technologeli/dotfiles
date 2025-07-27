@@ -8,12 +8,13 @@ return {
 		version = 'v0.*',
 		opts = {
 			keymap = { preset = 'default' },
-
+			enabled = function()
+				return not vim.tbl_contains({ "markdown" }, vim.bo.filetype)
+			end,
 			appearance = {
 				use_nvim_cmp_as_default = true,
 				nerd_font_variant = 'mono'
 			},
-
 			signature = { enabled = true }
 		},
 	},

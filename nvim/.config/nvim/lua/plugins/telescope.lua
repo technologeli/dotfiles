@@ -25,6 +25,7 @@ return {
 
 			require("telescope").setup {
 				defaults = {
+					file_ignore_patterns = { ".git/" },
 					mappings = {
 						i = {
 							["<C-y>"] = insert_path,
@@ -61,7 +62,7 @@ return {
 			end, { desc = "[S]earch [P]ackages" })
 			vim.keymap.set("n", "<leader>nf", function()
 				builtin.find_files {
-					cwd = "~/notes"
+					cwd = "~/notes",
 				}
 			end)
 

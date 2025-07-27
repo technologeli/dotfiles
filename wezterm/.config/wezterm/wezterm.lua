@@ -4,6 +4,7 @@ local keys = {}
 
 config.window_decorations = "RESIZE"
 config.enable_tab_bar = false
+config.default_cursor_style = 'SteadyBlock'
 
 local light_scheme = "GruvboxLight"
 local dark_scheme = "GruvboxDark"

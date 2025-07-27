@@ -29,16 +29,26 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
-# Shell integrations
-eval "$(oh-my-posh init zsh --config $HOME/dotfiles/oh-my-posh/config.toml)"
-eval "$(zoxide init --cmd cd zsh)"
-
 # Alias
 alias ls="exa"
 alias bat="batcat --theme gruvbox-dark"
 
 # Add to PATH
-export PATH="$PATH:~/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
+export PATH="$PATH:$HOME/.local/lua-language-server-3.15.0/bin"
+export PATH="$PATH:$HOME/.local/kotlin-language-server/bin"
+
+eval "$(oh-my-posh init zsh --config $HOME/dotfiles/oh-my-posh/config.toml)"
+eval "$(zoxide init --cmd cd zsh)"
 
 # Set nvim as manpager
 export MANPAGER="nvim +Man!"
+
+# Node Version Manager
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
