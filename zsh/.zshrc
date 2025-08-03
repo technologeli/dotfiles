@@ -13,6 +13,7 @@ zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-autosuggestions
 
 # Completion
+FPATH=~/.rbenv/completions:"$FPATH"
 autoload -Uz compinit && compinit
 zinit cdreplay -q
 
@@ -37,6 +38,7 @@ alias bat="batcat --theme gruvbox-dark"
 export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:$HOME/.local/lua-language-server-3.15.0/bin"
 export PATH="$PATH:$HOME/.local/kotlin-language-server/bin"
+export PATH="$PATH:$HOME/.local/zig-x86_64-linux-0.15.0-dev.1254+c9ce1debe/"
 
 eval "$(oh-my-posh init zsh --config $HOME/dotfiles/oh-my-posh/config.toml)"
 eval "$(zoxide init --cmd cd zsh)"
@@ -49,6 +51,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+export GEM_HOME="$HOME/gems"
+export PATH="$HOME/gems/bin:$PATH"

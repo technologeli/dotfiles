@@ -6,10 +6,7 @@ return {
 		---@type render.md.UserConfig
 		opts = {
 			heading = {
-				width = "block",
-				position = "inline",
-				left_pad = 2,
-				right_pad = 2,
+				enabled = false
 			}
 		},
 	}
