@@ -38,7 +38,7 @@ alias bat="batcat --theme gruvbox-dark"
 export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:$HOME/.local/lua-language-server-3.15.0/bin"
 export PATH="$PATH:$HOME/.local/kotlin-language-server/bin"
-export PATH="$PATH:$HOME/.local/zig-x86_64-linux-0.15.0-dev.1254+c9ce1debe/"
+export PATH="$PATH:$HOME/.local/zig/"
 
 eval "$(oh-my-posh init zsh --config $HOME/dotfiles/oh-my-posh/config.toml)"
 eval "$(zoxide init --cmd cd zsh)"

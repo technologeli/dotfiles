@@ -66,7 +66,7 @@ local function pick_notes()
 end
 vim.keymap.set("n", "<leader>nf", pick_notes)
 
-vim.lsp.enable({ "lua_ls", "clangd" })
+vim.lsp.enable({ "lua_ls", "clangd", "zls" })
 vim.lsp.config("lua_ls", {
 	settings = {
 		Lua = {
@@ -165,7 +165,6 @@ vim.keymap.set("n", "<leader>nt", today)
 require('render-markdown').setup({
 	heading = { enabled = false },
 })
-
 
 require("nvim-treesitter.configs").setup({
 	highlight = {

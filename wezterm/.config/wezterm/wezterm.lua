@@ -14,21 +14,21 @@ config.font = wezterm.font {
 	family = "JetBrains Mono",
 	harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
 }
+config.font_size = 20
 
-config.default_workspace = "0"
-wezterm.on("toggle-dark-mode", function(window,pane)
-  local overrides = window:get_config_overrides() or {}
-  if (overrides.color_scheme == light_scheme)
-  then
-    overrides.color_scheme = dark_scheme
-  else
-    overrides.color_scheme = light_scheme
-  end
-  window:set_config_overrides(overrides)
+wezterm.on("toggle-dark-mode", function(window, pane)
+	local overrides = window:get_config_overrides() or {}
+	if (overrides.color_scheme == light_scheme)
+	then
+		overrides.color_scheme = dark_scheme
+	else
+		overrides.color_scheme = light_scheme
+	end
+	window:set_config_overrides(overrides)
 end)
 
 config.leader = { key = " ", mods = "CTRL", timeout_milliseconds = 1000 }
-table.insert(keys, { mods = "LEADER", key = "t", action = wezterm.action{EmitEvent="toggle-dark-mode"},})
+table.insert(keys, { mods = "LEADER", key = "t", action = wezterm.action { EmitEvent = "toggle-dark-mode" }, })
 
 config.keys = keys
 
