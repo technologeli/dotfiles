@@ -1,4 +1,6 @@
 vim.opt.winborder = "rounded"
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.wrap = false
@@ -12,9 +14,9 @@ vim.opt.smartcase = true
 vim.opt.swapfile = false
 
 vim.g.mapleader = " "
-vim.keymap.set("n", "<leader>o", ":update<CR> :source<CR>")
+vim.keymap.set("n", "<leader>o", ":update<CR>:source<CR>")
 vim.keymap.set("n", "<leader>w", ":write<CR>")
-vim.keymap.set("n", "<ESC>", ":nohlsearch<CR>")
+vim.keymap.set("n", "<ESC>", ":nohlsearch<CR>", { silent = true })
 
 vim.pack.add({
 	{ src = "https://github.com/morhetz/gruvbox" },
@@ -22,6 +24,9 @@ vim.pack.add({
 	{ src = "https://github.com/echasnovski/mini.pick" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/tpope/vim-fugitive" },
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
+	{ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
+	{ src = "https://github.com/supermaven-inc/supermaven-nvim" },
 })
 
 require("oil").setup({
@@ -61,9 +66,18 @@ local function pick_notes()
 end
 vim.keymap.set("n", "<leader>nf", pick_notes)
 
-vim.lsp.enable("lua_ls")
-vim.keymap.set("n", "K", vim.lsp.buf.hover)
-vim.keymap.set("n", "<C-k>", vim.diagnostic.open_float)
+vim.lsp.enable({ "lua_ls", "clangd" })
+vim.lsp.config("lua_ls", {
+	settings = {
+		Lua = {
+			workspace = {
+				library = vim.api.nvim_get_runtime_file("", true),
+			},
+		},
+	},
+})
+vim.keymap.set("n", "<leader>d", vim.lsp.buf.definition)
+vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format)
 vim.cmd("colorscheme gruvbox")
 
 
@@ -109,8 +123,8 @@ local function is_created_today(name)
 	local today = os.date("*t")
 
 	return tonumber(string.sub(name, 1, 4)) == today.year
-	and tonumber(string.sub(name, 5, 6)) == today.month
-	and tonumber(string.sub(name, 7, 8)) == today.day
+		and tonumber(string.sub(name, 5, 6)) == today.month
+		and tonumber(string.sub(name, 7, 8)) == today.day
 end
 
 local function today()
@@ -146,3 +160,23 @@ local function today()
 	vim.cmd("edit " .. vim.fn.fnameescape(latest_file))
 end
 vim.keymap.set("n", "<leader>nt", today)
+
+
+require('render-markdown').setup({
+	heading = { enabled = false },
+})
+
+
+require("nvim-treesitter.configs").setup({
+	highlight = {
+		enable = true,
+	}
+})
+
+require("supermaven-nvim").setup({
+	keymaps = {
+		-- <C-j> = accept word
+		clear_suggestion = "<C-s>",
+	},
+	ignore_filetypes = { "markdown" }
+})
