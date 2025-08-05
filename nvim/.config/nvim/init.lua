@@ -46,9 +46,6 @@ local function pick_dotfiles()
 			items = vim.fn.systemlist("rg --hidden --files --glob '!.git' " .. vim.fn.expand("~/dotfiles")),
 			name = "Dotfiles"
 		},
-		action = function(item)
-			vim.cmd("edit " .. item)
-		end
 	})
 end
 vim.keymap.set("n", "<leader>c", pick_dotfiles)
@@ -59,12 +56,62 @@ local function pick_notes()
 			items = vim.fn.systemlist("rg --files " .. vim.fn.expand("~/notes")),
 			name = "Notes"
 		},
-		action = function(item)
-			vim.cmd("edit " .. item)
-		end
 	})
 end
 vim.keymap.set("n", "<leader>nf", pick_notes)
+
+local function extract_title(filename)
+	local start_pos = filename:find("%-%-") -- Look for "--"
+
+	if not start_pos then
+		return filename:sub(1, filename:find("T") - 1)
+	end
+
+	-- Adjust to start extracting after "--"
+	start_pos = start_pos + 2
+
+	-- Look for "__" after "--"
+	local end_pos = filename:find("__", start_pos)
+	if not end_pos then
+		-- If "__" not found, look for "."
+		end_pos = filename:find("%.", start_pos)
+	end
+
+	-- If no "__" or ".", return from "--" to end of string
+	if not end_pos then
+		return filename:sub(start_pos)
+	end
+
+	return filename:sub(start_pos, end_pos - 1)
+end
+
+local function pick_link()
+	MiniPick.start({
+		source = {
+			items = vim.fn.systemlist("rg --files " .. vim.fn.expand("~/notes")),
+			name = "Link to Note",
+			choose = function(item)
+				local filename = vim.fn.fnamemodify(item, ":t")
+
+				vim.schedule(function()
+					vim.ui.input({ prompt = "Link Text: ", default = extract_title(filename) }, function(text)
+						if text == nil then
+							local line = "[" .. extract_title(filename) .. "](" .. item .. ")"
+							vim.cmd("normal! i" .. line)
+						else
+							local line = "[" .. text .. "](" .. item .. ")"
+							vim.cmd("normal! i" .. line)
+						end
+					end)
+				end)
+			end,
+		},
+	})
+end
+
+vim.keymap.set({ "n", "i" }, "<C-l>", pick_link)
+
+
 
 vim.lsp.enable({ "lua_ls", "clangd", "zls" })
 vim.lsp.config("lua_ls", {

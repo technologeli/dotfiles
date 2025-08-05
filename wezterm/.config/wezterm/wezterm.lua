@@ -15,6 +15,7 @@ config.font = wezterm.font {
 	harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
 }
 config.font_size = 20
+config.adjust_window_size_when_changing_font_size = false
 
 wezterm.on("toggle-dark-mode", function(window, pane)
 	local overrides = window:get_config_overrides() or {}
