@@ -16,6 +16,7 @@ vim.opt.swapfile = false
 vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>o", ":update<CR>:source<CR>")
 vim.keymap.set("n", "<leader>w", ":write<CR>")
+vim.keymap.set("n", "<leader>q", ":quit<CR>")
 vim.keymap.set("n", "<ESC>", ":nohlsearch<CR>", { silent = true })
 
 vim.pack.add({
@@ -96,10 +97,10 @@ local function pick_link()
 				vim.schedule(function()
 					vim.ui.input({ prompt = "Link Text: ", default = extract_title(filename) }, function(text)
 						if text == nil then
-							local line = "[" .. extract_title(filename) .. "](" .. item .. ")"
+							local line = "[" .. extract_title(filename) .. "](./" .. filename .. ")"
 							vim.cmd("normal! i" .. line)
 						else
-							local line = "[" .. text .. "](" .. item .. ")"
+							local line = "[" .. text .. "](./" .. filename .. ")"
 							vim.cmd("normal! i" .. line)
 						end
 					end)
