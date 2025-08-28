@@ -1,3 +1,4 @@
+vim.opt.mouse = ""
 vim.opt.winborder = "rounded"
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -51,11 +52,31 @@ local function pick_dotfiles()
 end
 vim.keymap.set("n", "<leader>c", pick_dotfiles)
 
+local external_extensions = {
+	"xlsx", "pptx", "docx",
+	"pdf",
+	"png", "jpg", "jpeg", "gif", "bmp", "svg", "webp"
+}
+
 local function pick_notes()
 	MiniPick.start({
 		source = {
 			items = vim.fn.systemlist("rg --files " .. vim.fn.expand("~/notes")),
-			name = "Notes"
+			name = "Notes",
+			choose = function(item)
+				local extension = vim.fn.fnamemodify(item, ":e")
+				if vim.tbl_contains(external_extensions, extension:lower()) then
+					-- open in external app
+					vim.schedule(function()
+						vim.cmd("!xdg-open " .. vim.fn.fnameescape(item))
+					end)
+				else
+					-- open in neovim
+					vim.schedule(function()
+						vim.cmd("edit " .. vim.fn.fnameescape(item))
+					end)
+				end
+			end,
 		},
 	})
 end
@@ -227,3 +248,12 @@ require("supermaven-nvim").setup({
 	},
 	ignore_filetypes = { "markdown" }
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.textwidth = 80
+    vim.opt_local.formatoptions:append("ta")
+  end,
+})
+
