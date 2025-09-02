@@ -1,4 +1,5 @@
 vim.opt.mouse = ""
+vim.opt.spellfile = vim.fn.expand("~/notes/20250902T1354--dictionary.en.utf-8.add")
 vim.opt.winborder = "rounded"
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -253,3 +254,11 @@ require("supermaven-nvim").setup({
 	ignore_filetypes = { "markdown" }
 })
 
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "markdown", "text", "gitcommit" },
+  callback = function()
+    vim.opt_local.spell = true
+    vim.opt_local.spelllang = { "en_us" }
+  end,
+})
