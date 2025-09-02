@@ -59,22 +59,31 @@ local external_extensions = {
 	"png", "jpg", "jpeg", "gif", "bmp", "svg", "webp"
 }
 
+local function get_notes_list()
+	local items = vim.fn.systemlist("rg --files " .. vim.fn.expand("~/notes"))
+	for i, item in ipairs(items) do
+		items[i] = vim.fn.fnamemodify(item, ":t")
+	end
+	return items
+end
+
 local function pick_notes()
 	MiniPick.start({
 		source = {
-			items = vim.fn.systemlist("rg --files " .. vim.fn.expand("~/notes")),
+			items = get_notes_list(),
 			name = "Notes",
-			choose = function(item)
-				local extension = vim.fn.fnamemodify(item, ":e")
+			choose = function(filename)
+				local extension = vim.fn.fnamemodify(filename, ":e")
+				local notes_directory = vim.fn.expand("~/notes")
 				if vim.tbl_contains(external_extensions, extension:lower()) then
 					-- open in external app
 					vim.schedule(function()
-						vim.cmd("!xdg-open " .. vim.fn.fnameescape(item))
+						vim.cmd("!xdg-open " .. notes_directory .. "/" .. vim.fn.fnameescape(filename))
 					end)
 				else
 					-- open in neovim
 					vim.schedule(function()
-						vim.cmd("edit " .. vim.fn.fnameescape(item))
+						vim.cmd("edit " .. notes_directory .. "/" .. vim.fn.fnameescape(filename))
 					end)
 				end
 			end,
@@ -82,10 +91,8 @@ local function pick_notes()
 	})
 end
 vim.keymap.set("n", "<leader>nf", pick_notes)
-
 local function extract_title(filename)
 	local start_pos = filename:find("%-%-") -- Look for "--"
-
 	if not start_pos then
 		return filename:sub(1, filename:find("T") - 1)
 	end
@@ -108,14 +115,13 @@ local function extract_title(filename)
 	return filename:sub(start_pos, end_pos - 1)
 end
 
+
 local function pick_link()
 	MiniPick.start({
 		source = {
-			items = vim.fn.systemlist("rg --files " .. vim.fn.expand("~/notes")),
+			items = get_notes_list(),
 			name = "Link to Note",
-			choose = function(item)
-				local filename = vim.fn.fnamemodify(item, ":t")
-
+			choose = function(filename)
 				vim.schedule(function()
 					vim.ui.input({ prompt = "Link Text: ", default = extract_title(filename) }, function(text)
 						if text == nil then
