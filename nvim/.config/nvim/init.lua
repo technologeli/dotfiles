@@ -17,7 +17,7 @@ vim.opt.swapfile = false
 vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>o", ":update<CR>:source<CR>")
 vim.keymap.set("n", "<leader>w", ":write<CR>")
-vim.keymap.set("n", "<leader>q", ":quit<CR>")
+vim.keymap.set("n", "<leader>q", "gqap")
 vim.keymap.set("n", "<ESC>", ":nohlsearch<CR>", { silent = true })
 
 vim.pack.add({
@@ -233,6 +233,10 @@ vim.keymap.set("n", "<leader>nt", today)
 
 require('render-markdown').setup({
 	heading = { enabled = false },
+	code = {
+		style = 'normal',
+		border = 'thick',
+	},
 })
 
 require("nvim-treesitter.configs").setup({
@@ -247,13 +251,5 @@ require("supermaven-nvim").setup({
 		clear_suggestion = "<C-s>",
 	},
 	ignore_filetypes = { "markdown" }
-})
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
-  callback = function()
-    vim.opt_local.textwidth = 80
-    vim.opt_local.formatoptions:append("ta")
-  end,
 })
 
