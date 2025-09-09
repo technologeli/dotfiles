@@ -1,5 +1,7 @@
+local denote_directory = vim.fn.expand("~/notes")
 vim.opt.mouse = ""
-vim.opt.spellfile = vim.fn.expand("~/notes/20250902T1354--dictionary.en.utf-8.add")
+vim.opt.colorcolumn = "80"
+vim.opt.spellfile = vim.fs.joinpath(denote_directory, "20250902T135400--dictionary.en.utf-8.add")
 vim.opt.winborder = "rounded"
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -18,7 +20,8 @@ vim.opt.swapfile = false
 vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>o", ":update<CR>:source<CR>")
 vim.keymap.set("n", "<leader>w", ":write<CR>")
-vim.keymap.set("n", "<leader>q", "gqap")
+vim.keymap.set("n", "<leader>q", "mmgqap'm") -- get marked
+vim.keymap.set("n", "<leader>z", "1z=")
 vim.keymap.set("n", "<ESC>", ":nohlsearch<CR>", { silent = true })
 
 vim.pack.add({
@@ -31,6 +34,8 @@ vim.pack.add({
 	{ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
 	{ src = "https://github.com/supermaven-inc/supermaven-nvim" },
 })
+
+-- to update, run :lua vim.pack.update() then :w
 
 require("oil").setup({
 	view_options = { show_hidden = true },
@@ -60,7 +65,7 @@ local external_extensions = {
 }
 
 local function get_notes_list()
-	local items = vim.fn.systemlist("rg --files " .. vim.fn.expand("~/notes"))
+	local items = vim.fn.systemlist("rg --files " .. denote_directory)
 	for i, item in ipairs(items) do
 		items[i] = vim.fn.fnamemodify(item, ":t")
 	end
@@ -74,16 +79,15 @@ local function pick_notes()
 			name = "Notes",
 			choose = function(filename)
 				local extension = vim.fn.fnamemodify(filename, ":e")
-				local notes_directory = vim.fn.expand("~/notes")
 				if vim.tbl_contains(external_extensions, extension:lower()) then
 					-- open in external app
 					vim.schedule(function()
-						vim.cmd("!xdg-open " .. notes_directory .. "/" .. vim.fn.fnameescape(filename))
+						vim.ui.open(vim.fs.joinpath(denote_directory, filename))
 					end)
 				else
 					-- open in neovim
 					vim.schedule(function()
-						vim.cmd("edit " .. notes_directory .. "/" .. vim.fn.fnameescape(filename))
+						vim.cmd("edit " .. vim.fs.joinpath(denote_directory, filename))
 					end)
 				end
 			end,
@@ -164,10 +168,9 @@ local function slugify(str)
 end
 
 local function get_timestamp()
-	return os.date("%Y%m%dT%H%M")
+	return os.date("%Y%m%dT%H%M%S")
 end
 
-local denote_directory = vim.fn.expand("~/notes")
 local function create_note()
 	vim.ui.input({ prompt = "Title: " }, function(title)
 		local filename = get_timestamp()
@@ -257,14 +260,48 @@ require("supermaven-nvim").setup({
 		-- <C-j> = accept word
 		clear_suggestion = "<C-s>",
 	},
-	ignore_filetypes = { "markdown" }
+	ignore_filetypes = { "markdown", "tex", "oil" }
 })
 
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "markdown", "text", "gitcommit" },
-  callback = function()
-    vim.opt_local.spell = true
-    vim.opt_local.spelllang = { "en_us" }
-  end,
+	pattern = { "markdown", "text", "gitcommit", "tex" },
+	callback = function()
+		vim.opt_local.spell = true
+		vim.opt_local.spelllang = { "en_us" }
+	end,
 })
+
+vim.keymap.set({ "n", "v", "o" }, "j", function()
+	return vim.v.count > 0 and "j" or ""
+end, { expr = true })
+vim.keymap.set({ "n", "v", "o" }, "k", function()
+	return vim.v.count > 0 and "k" or ""
+end, { expr = true })
+
+vim.api.nvim_create_user_command("DenoteAdopt", function(opts)
+	local original_filename = opts.args
+	if original_filename == "" then
+		vim.notify("No file name given", vim.log.levels.ERROR)
+		return
+	end
+
+	local filename = vim.fn.fnamemodify(original_filename, ":t:r")
+	vim.ui.input({ prompt = "Title (make empty to slugify): ", default = filename }, function(title)
+		if title == nil then
+			return
+		end
+
+		if title == "" then
+			title = slugify(filename)
+		end
+
+		filename = title
+
+		local filetype = vim.fn.fnamemodify(original_filename, ":e")
+		local new_filename = get_timestamp() .. "--" .. filename .. "." .. filetype
+		vim.fn.rename(original_filename, vim.fs.joinpath(denote_directory, new_filename))
+		vim.cmd("redraw")
+		vim.notify("File renamed to " .. new_filename)
+	end)
+end, { nargs = 1, complete = "file" })
