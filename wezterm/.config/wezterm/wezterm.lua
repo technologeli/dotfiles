@@ -14,7 +14,7 @@ config.font = wezterm.font {
 	family = "JetBrains Mono",
 	harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
 }
-config.font_size = 20
+config.font_size = 16
 config.adjust_window_size_when_changing_font_size = false
 
 wezterm.on("toggle-dark-mode", function(window, pane)

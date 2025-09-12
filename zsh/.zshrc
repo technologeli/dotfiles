@@ -61,3 +61,8 @@ export PATH="$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/cmdline-tools/latest/b
 
 # Added by `rbenv init` on Wed Aug  6 03:16:37 PM EDT 2025
 eval "$(~/.rbenv/bin/rbenv init - --no-rehash zsh)"
+
+# go
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin

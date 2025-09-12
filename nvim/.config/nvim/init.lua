@@ -32,7 +32,7 @@ vim.pack.add({
 	{ src = "https://github.com/tpope/vim-fugitive" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
 	{ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
-	{ src = "https://github.com/supermaven-inc/supermaven-nvim" },
+	{ src = "https://github.com/folke/flash.nvim" },
 })
 
 -- to update, run :lua vim.pack.update() then :w
@@ -255,15 +255,6 @@ require("nvim-treesitter.configs").setup({
 	}
 })
 
-require("supermaven-nvim").setup({
-	keymaps = {
-		-- <C-j> = accept word
-		clear_suggestion = "<C-s>",
-	},
-	ignore_filetypes = { "markdown", "tex", "oil" }
-})
-
-
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "markdown", "text", "gitcommit", "tex" },
 	callback = function()
@@ -305,3 +296,22 @@ vim.api.nvim_create_user_command("DenoteAdopt", function(opts)
 		vim.notify("File renamed to " .. new_filename)
 	end)
 end, { nargs = 1, complete = "file" })
+
+vim.keymap.set("n", "<leader>h1", "I# ")
+vim.keymap.set("n", "<leader>h2", "I## ")
+vim.keymap.set("n", "<leader>h3", "I### ")
+vim.keymap.set("n", "<leader>h4", "I#### ")
+vim.keymap.set("n", "<leader>h5", "I##### ")
+vim.keymap.set("n", "<leader>h6", "I###### ")
+
+require("flash").setup({
+	prompt = { enabled = false }
+})
+
+vim.keymap.set({ "n", "x", "o" }, "<leader>s", function() require("flash").jump() end)
+vim.keymap.set({ "n", "x", "o" }, "<leader>t", function() require("flash").treesitter() end)
+vim.keymap.set("o", "r", function() require("flash").remote() end)
+vim.keymap.set({ "o", "x" }, "R", function() require("flash").treesitter_search() end)
+vim.keymap.set("c", "<C-s>", function() require("flash").toggle() end)
+
+vim.keymap.set("n", "<leader>m", ":make<CR>")
