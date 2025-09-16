@@ -21,7 +21,8 @@ vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>o", ":update<CR>:source<CR>")
 vim.keymap.set("n", "<leader>w", ":write<CR>")
 vim.keymap.set("n", "<leader>q", "mmgqap'm") -- get marked
-vim.keymap.set("n", "<leader>z", "1z=")
+vim.keymap.set("n", "<C-z>", "1z=e")
+vim.keymap.set("i", "<C-z>", "<ESC>1z=ea")
 vim.keymap.set("n", "<ESC>", ":nohlsearch<CR>", { silent = true })
 
 vim.pack.add({
@@ -146,7 +147,6 @@ vim.keymap.set({ "n", "i" }, "<C-l>", pick_link)
 
 
 
-vim.lsp.enable({ "lua_ls", "clangd", "zls" })
 vim.lsp.config("lua_ls", {
 	settings = {
 		Lua = {
@@ -156,6 +156,11 @@ vim.lsp.config("lua_ls", {
 		},
 	},
 })
+vim.lsp.config("basedpyright", {
+	cmd = { "uv", "run", "basedpyright-langserver", "--stdio" }
+})
+vim.lsp.enable({ "lua_ls", "clangd", "zls", "basedpyright" })
+
 vim.keymap.set("n", "<leader>d", vim.lsp.buf.definition)
 vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format)
 vim.cmd("colorscheme gruvbox")
@@ -303,6 +308,8 @@ vim.keymap.set("n", "<leader>h3", "I### ")
 vim.keymap.set("n", "<leader>h4", "I#### ")
 vim.keymap.set("n", "<leader>h5", "I##### ")
 vim.keymap.set("n", "<leader>h6", "I###### ")
+vim.keymap.set("n", "<leader>a", "}kA")
+vim.keymap.set("n", "<leader>i", "{jI")
 
 require("flash").setup({
 	prompt = { enabled = false }
@@ -315,3 +322,10 @@ vim.keymap.set({ "o", "x" }, "R", function() require("flash").treesitter_search(
 vim.keymap.set("c", "<C-s>", function() require("flash").toggle() end)
 
 vim.keymap.set("n", "<leader>m", ":make<CR>")
+
+vim.opt.grepprg = "rg --vimgrep"
+vim.opt.grepformat = "%f:%l:%c:%m"
+vim.api.nvim_create_user_command("Rg", function(opts)
+	vim.cmd("sil grep " .. (opts.args or ""))
+	vim.cmd("copen")
+end, { nargs = "*" })
