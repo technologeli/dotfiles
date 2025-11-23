@@ -268,12 +268,12 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
-vim.keymap.set({ "n", "v", "o" }, "j", function()
-	return vim.v.count > 0 and "j" or ""
-end, { expr = true })
-vim.keymap.set({ "n", "v", "o" }, "k", function()
-	return vim.v.count > 0 and "k" or ""
-end, { expr = true })
+--vim.keymap.set({ "n", "v", "o" }, "j", function()
+--	return vim.v.count > 0 and "j" or ""
+--end, { expr = true })
+--vim.keymap.set({ "n", "v", "o" }, "k", function()
+--	return vim.v.count > 0 and "k" or ""
+--end, { expr = true })
 
 vim.api.nvim_create_user_command("DenoteAdopt", function(opts)
 	local original_filename = opts.args

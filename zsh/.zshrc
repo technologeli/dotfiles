@@ -66,3 +66,4 @@ eval "$(~/.rbenv/bin/rbenv init - --no-rehash zsh)"
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+alias pwninit='pwninit --template-path ~/.config/pwninit-template.py --template-bin-name e'
