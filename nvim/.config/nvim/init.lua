@@ -36,6 +36,7 @@ vim.pack.add({
 	{ src = "https://github.com/folke/flash.nvim" },
 	{ src = "https://github.com/3rd/image.nvim" },
 })
+-- to update, run :lua vim.pack.update() then :w
 
 require("image").setup({
   backend = "kitty",
@@ -50,7 +51,13 @@ require("image").setup({
   },
 })
 
--- to update, run :lua vim.pack.update() then :w
+
+require("nvim-treesitter").setup({
+	highlight = {
+		enable = true,
+	}
+})
+
 
 require("oil").setup({
 	view_options = { show_hidden = true },
@@ -97,12 +104,6 @@ require('render-markdown').setup({
 		style = 'normal',
 		border = 'thick',
 	},
-})
-
-require("nvim-treesitter.configs").setup({
-	highlight = {
-		enable = true,
-	}
 })
 
 vim.api.nvim_create_autocmd("FileType", {
