@@ -33,6 +33,28 @@ setopt hist_find_no_dups
 # Alias
 alias ls="exa"
 alias bat="batcat --theme gruvbox-dark"
+nvr() {
+	local socket="$XDG_RUNTIME_DIR/neovim.socket"
+
+	if [[ -S "$socket" ]]; then
+		if [[ -n "$NVIM" ]]; then
+			# Inside the server
+			if [[ -n "$1" ]]; then
+				nvim --server "$socket" --remote "$(realpath "$1")"
+			else
+				echo "Already inside Neovim."
+			fi
+		else
+			# Outside the server
+			if [[ -n "$1" ]]; then
+				{ nvim --server "$socket" --remote "$(realpath "$1")" } &!
+			fi
+			nvim --server "$socket" --remote-ui
+		fi
+	else
+		echo "Neovim server not running."
+	fi
+}
 
 # Add to PATH
 export PATH="$PATH:$HOME/.local/bin"
@@ -67,3 +89,7 @@ export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 alias pwninit='pwninit --template-path ~/.config/pwninit-template.py --template-bin-name e'
+
+if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
+    export TERM=xterm-256color
+fi

@@ -16,6 +16,8 @@ vim.opt.swapfile = false
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.swapfile = false
+vim.opt.termguicolors = true
+vim.opt.scrollback = 1000000
 
 vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>o", ":update<CR>:source<CR>")
@@ -34,6 +36,20 @@ vim.pack.add({
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
 	{ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
 	{ src = "https://github.com/folke/flash.nvim" },
+	{ src = "https://github.com/3rd/image.nvim" },
+})
+
+require("image").setup({
+  backend = "kitty",
+  processor = "magick_cli", -- or "magick_rock"
+  integrations = {
+    markdown = {
+      enabled = true,
+      download_remote_images = false,
+      only_render_image_at_cursor = false,
+      filetypes = { "markdown" },
+    },
+  },
 })
 
 -- to update, run :lua vim.pack.update() then :w
@@ -329,3 +345,16 @@ vim.api.nvim_create_user_command("Rg", function(opts)
 	vim.cmd("sil grep " .. (opts.args or ""))
 	vim.cmd("copen")
 end, { nargs = "*" })
+
+vim.keymap.set("n", "<leader>e", ":detach<CR>")
+vim.keymap.set("n", "<leader>x", ":terminal<CR>")
+
+vim.keymap.set("n", "<leader>r", function()
+	local old = vim.api.nvim_buf_get_name(0)
+	vim.ui.input({ prompt = "Rename " .. old .. " to: " }, function(new)
+		if new and new ~= "" and new ~= old then
+			vim.fn.rename(old, new)
+			vim.cmd("file " .. vim.fn.fnameescape(new))
+		end
+	end)
+end, { desc = "Rename current file" })
