@@ -34,26 +34,38 @@ setopt hist_find_no_dups
 alias ls="exa"
 alias bat="batcat --theme gruvbox-dark"
 nvr() {
-	local socket="$XDG_RUNTIME_DIR/neovim.socket"
+    local socket="$XDG_RUNTIME_DIR/neovim.socket"
+    local targets=("$@")
 
-	if [[ -S "$socket" ]]; then
-		if [[ -n "$NVIM" ]]; then
-			# Inside the server
-			if [[ -n "$1" ]]; then
-				nvim --server "$socket" --remote "$(realpath "$1")"
-			else
-				echo "Already inside Neovim."
-			fi
-		else
-			# Outside the server
-			if [[ -n "$1" ]]; then
-				{ nvim --server "$socket" --remote "$(realpath "$1")" } &!
-			fi
-			nvim --server "$socket" --remote-ui
-		fi
-	else
-		echo "Neovim server not running."
-	fi
+    # If stdin is a pipe, read each line as a separate filename
+    if [[ ! -t 0 ]]; then
+        while IFS= read -r line; do
+            [[ -n "$line" ]] && targets+=("$line")
+        done
+    fi
+
+    if [[ -S "$socket" ]]; then
+        if [[ -n "$NVIM" ]]; then
+            # Inside the server: Open all files in the current session
+            if (( ${#targets[@]} > 0 )); then
+                for file in "${targets[@]}"; do
+                    nvim --server "$socket" --remote "$(realpath "$file")"
+                done
+            else
+                echo "Already inside Neovim."
+            fi
+        else
+            # Outside the server: Send all files to the server, then attach
+            if (( ${#targets[@]} > 0 )); then
+                for file in "${targets[@]}"; do
+                    { nvim --server "$socket" --remote "$(realpath "$file")" } &!
+                done
+            fi
+            nvim --server "$socket" --remote-ui
+        fi
+    else
+        echo "Neovim server not running."
+    fi
 }
 
 # Add to PATH

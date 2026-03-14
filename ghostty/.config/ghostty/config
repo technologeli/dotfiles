@@ -1,0 +1,4 @@
+window-decoration = false
+theme = Gruvbox Dark
+font-feature = -calt, -liga, -dlig
+window-padding-x = 4
