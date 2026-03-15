@@ -16,6 +16,13 @@ vim.opt.smartcase = true
 vim.opt.swapfile = false
 vim.opt.termguicolors = true
 vim.opt.scrollback = 1000000
+vim.api.nvim_create_autocmd("TermOpen", {
+  pattern = "*",
+  callback = function()
+    vim.opt_local.number = true
+    vim.opt_local.relativenumber = true
+  end,
+})
 
 vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>o", ":update<CR>:source<CR>")
@@ -45,6 +52,7 @@ require("snacks").setup({
 })
 
 
+-- npm install -g tree-sitter-cli
 require("nvim-treesitter").setup({
 	highlight = {
 		enable = true,
@@ -220,39 +228,39 @@ vim.api.nvim_create_user_command("SSH", function(opts)
 end, { nargs = "*" })
 
 function _G.MyTabLine()
-  local s = ""
-  local tabs = vim.api.nvim_list_tabpages() -- Get handles for all tabs
-  
-  for i, handle in ipairs(tabs) do
-    local is_current = (handle == vim.api.nvim_get_current_tabpage())
-    s = s .. (is_current and "%#TabLineSel#" or "%#TabLine#")
-    s = s .. "%" .. i .. "T" -- Allow clicking tab index 'i'
-    
-    -- Correct way to get a variable from a specific tab handle
-    local success, custom_name = pcall(vim.api.nvim_tabpage_get_var, handle, "tabname")
-    local label = ""
-    
-    if success and custom_name ~= "" then
-      label = custom_name
-    else
-      -- Fallback: Get name of the first window's buffer in that tab
-      local win = vim.api.nvim_tabpage_get_win(handle)
-      local buf = vim.api.nvim_win_get_buf(win)
-      local bufname = vim.api.nvim_buf_get_name(buf)
-      label = (bufname == "") and "[No Name]" or vim.fn.fnamemodify(bufname, ":t")
-    end
-    
-    s = s .. " " .. i .. ":" .. label .. " "
-  end
-  
-  return s .. "%#TabLineFill#%T"
+	local s = ""
+	local tabs = vim.api.nvim_list_tabpages() -- Get handles for all tabs
+
+	for i, handle in ipairs(tabs) do
+		local is_current = (handle == vim.api.nvim_get_current_tabpage())
+		s = s .. (is_current and "%#TabLineSel#" or "%#TabLine#")
+		s = s .. "%" .. i .. "T" -- Allow clicking tab index 'i'
+
+		-- Correct way to get a variable from a specific tab handle
+		local success, custom_name = pcall(vim.api.nvim_tabpage_get_var, handle, "tabname")
+		local label = ""
+
+		if success and custom_name ~= "" then
+			label = custom_name
+		else
+			-- Fallback: Get name of the first window's buffer in that tab
+			local win = vim.api.nvim_tabpage_get_win(handle)
+			local buf = vim.api.nvim_win_get_buf(win)
+			local bufname = vim.api.nvim_buf_get_name(buf)
+			label = (bufname == "") and "[No Name]" or vim.fn.fnamemodify(bufname, ":t")
+		end
+
+		s = s .. " " .. i .. ":" .. label .. " "
+	end
+
+	return s .. "%#TabLineFill#%T"
 end
 
 vim.opt.tabline = "%!v:lua.MyTabLine()"
 
 vim.api.nvim_create_user_command('Tabname', function(opts)
-  vim.t.tabname = opts.args
-  vim.cmd('redrawtabline')
+	vim.t.tabname = opts.args
+	vim.cmd('redrawtabline')
 end, { nargs = 1 })
 
 vim.keymap.set("n", "<leader>T", ":tabnew<cr>")

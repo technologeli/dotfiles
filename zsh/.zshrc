@@ -105,3 +105,7 @@ alias pwninit='pwninit --template-path ~/.config/pwninit-template.py --template-
 if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
     export TERM=xterm-256color
 fi
+
+# dev containers
+export DOCKER_HOST=unix:///var/run/docker.sock
+export PATH="/home/eli/.devcontainers/bin:$PATH"
