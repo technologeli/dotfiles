@@ -20,7 +20,7 @@ local function get_timestamp()
 end
 
 local function get_notes_list()
-	local items = vim.fn.systemlist("rg --files " .. enote_directory)
+	local items = vim.fn.systemlist("rg --follow --files " .. enote_directory)
 	for i, item in ipairs(items) do
 		items[i] = vim.fn.fnamemodify(item, ":t")
 	end

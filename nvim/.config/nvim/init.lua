@@ -17,15 +17,14 @@ vim.opt.swapfile = false
 vim.opt.termguicolors = true
 vim.opt.scrollback = 1000000
 vim.api.nvim_create_autocmd("TermOpen", {
-  pattern = "*",
-  callback = function()
-    vim.opt_local.number = true
-    vim.opt_local.relativenumber = true
-  end,
+	pattern = "*",
+	callback = function()
+		vim.opt_local.number = true
+		vim.opt_local.relativenumber = true
+	end,
 })
 
 vim.g.mapleader = " "
-vim.keymap.set("n", "<leader>o", ":update<CR>:source<CR>")
 vim.keymap.set("n", "<leader>w", ":write<CR>")
 vim.keymap.set("n", "<leader>q", "mmgqap'm") -- get marked
 vim.keymap.set("n", "<C-z>", "1z=e")
@@ -34,6 +33,7 @@ vim.keymap.set("n", "<ESC>", ":nohlsearch<CR>", { silent = true })
 
 vim.pack.add({
 	{ src = "https://github.com/morhetz/gruvbox" },
+	{ src = "https://github.com/catppuccin/nvim", name = "catppuccin" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
 	{ src = "https://github.com/echasnovski/mini.pick" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
@@ -56,6 +56,7 @@ require("snacks").setup({
 require("nvim-treesitter").setup({
 	highlight = {
 		enable = true,
+		additional_vim_regex_highlighting = false
 	}
 })
 
@@ -68,7 +69,15 @@ vim.keymap.set("n", "-", ":Oil<CR>")
 require("mini.pick").setup({
 	options = { content_from_bottom = true }
 })
-vim.keymap.set("n", "<leader><leader>", ":Pick buffers<CR>")
+vim.keymap.set("n", "<leader><leader>", function()
+	local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+	table.sort(bufs, function(a, b) return a.lastused > b.lastused end)
+	local items = vim.tbl_map(function(b) return b.name end, bufs)
+	local choice = require("mini.pick").start({ source = { items = items } })
+	if choice ~= nil then
+		vim.cmd("edit " .. choice)
+	end
+end)
 vim.keymap.set("n", "<leader>f", ":Pick files<CR>")
 
 local function pick_dotfiles()
@@ -97,7 +106,8 @@ vim.lsp.enable({ "lua_ls", "clangd", "zls", "basedpyright" })
 
 vim.keymap.set("n", "<leader>d", vim.lsp.buf.definition)
 vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format)
-vim.cmd("colorscheme gruvbox")
+
+vim.cmd("colorscheme catppuccin-mocha")
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "markdown", "text", "gitcommit", "tex" },
@@ -161,8 +171,6 @@ vim.api.nvim_create_user_command("Rg", function(opts)
 	vim.cmd("copen")
 end, { nargs = "*" })
 
-vim.keymap.set("n", "<leader>e", ":detach<CR>")
-vim.keymap.set("n", "<leader>t", ":terminal<CR>")
 
 vim.keymap.set("n", "<leader>r", function()
 	local old = vim.api.nvim_buf_get_name(0)
@@ -263,6 +271,59 @@ vim.api.nvim_create_user_command('Tabname', function(opts)
 	vim.cmd('redrawtabline')
 end, { nargs = 1 })
 
-vim.keymap.set("n", "<leader>T", ":tabnew<cr>")
-vim.keymap.set("n", "<leader>W", ":tabclose<cr>")
-vim.keymap.set("n", "<leader>R", ":Tabname ")
+vim.api.nvim_create_autocmd("TermOpen", {
+	callback = function(ev)
+		vim.ui.input({ prompt = "Terminal name: " }, function(name)
+			if name and name ~= "" then
+				vim.api.nvim_buf_set_name(ev.buf, "term: " .. name)
+			end
+		end)
+	end,
+})
+
+vim.keymap.set("n", "<leader>e", ":detach<CR>")
+
+local last_term_buf = nil
+
+vim.api.nvim_create_autocmd("TermOpen", {
+	callback = function(ev)
+		last_term_buf = ev.buf
+	end,
+})
+
+vim.api.nvim_create_autocmd("BufEnter", {
+	callback = function(ev)
+		if vim.bo[ev.buf].buftype == "terminal" then
+			last_term_buf = ev.buf
+		end
+	end,
+})
+
+local function switch_to_last_term()
+	if not last_term_buf or not vim.api.nvim_buf_is_valid(last_term_buf) then
+		vim.notify("No terminal buffer found", vim.log.levels.WARN)
+		return
+	end
+	vim.api.nvim_set_current_buf(last_term_buf)
+end
+vim.keymap.set("n", "<leader>tn", ":terminal<CR>")
+vim.keymap.set("n", "<leader>tt", switch_to_last_term)
+
+vim.keymap.set("n", "<leader>oo", ":tabnew<cr>")
+vim.keymap.set("n", "<leader>on", ":tabnext<cr>")
+vim.keymap.set("n", "<leader>op", ":tabprev<cr>")
+vim.keymap.set("n", "<leader>oc", ":tabclose<cr>")
+vim.keymap.set("n", "<leader>or", ":Tabname ")
+
+local function toggle_quickfix()
+	local is_open = vim.fn.getqflist({ winid = 0 }).winid ~= 0
+	if is_open then
+		vim.cmd("cclose")
+	else
+		vim.cmd("copen")
+	end
+end
+
+vim.keymap.set("n", "<leader>j", ":cnext<cr>")
+vim.keymap.set("n", "<leader>k", ":cprev<cr>")
+vim.keymap.set("n", "<leader>x", toggle_quickfix)
